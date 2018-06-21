@@ -2,7 +2,7 @@
     <transition name="el-fade-in-linear">
         <div>
             <BackTop></BackTop>
-            <Layout>
+            <Layout >
                 <Header>
                     <Menu mode="horizontal" theme="dark" active-name="overview" @on-select="meunSelect">
                         <div class="panel-between">
@@ -30,12 +30,12 @@
                                     <a href="javascript:void(0)" style="display:block">
                                         <div class="panel-start item-center">
                                             <img src="../../assets/logo/logo.png" width="25px" alt="">
-                                            <div class="font-white" style="margin-left:10px">admin</div>
+                                            <div class="font-white" style="margin-left:10px">{{user.userName}}</div>
                                             <Icon class="font-white" style="margin-left:10px" type="arrow-down-b"></Icon>
                                         </div>
                                     </a>
                                     <DropdownMenu slot="list" >
-                                        <DropdownItem>
+                                        <!-- <DropdownItem>
                                             <div class="smeun-item panel-start item-center">
                                                 <Icon type="ios-gear-outline" size="16"></Icon>
                                                 <div style="margin-left:10px">个人设置</div>
@@ -46,9 +46,9 @@
                                                 <Icon type="ionic" size="16"></Icon>
                                                 <div style="margin-left:10px">安全中心</div>
                                             </div>
-                                        </DropdownItem>
+                                        </DropdownItem> -->
                                         <DropdownItem>
-                                            <div class="smeun-item panel-start item-center">
+                                            <div class="smeun-item panel-start item-center" @click="meunSelect('/login')">
                                                 <Icon type="log-out" size="16"></Icon>
                                                 <div style="margin-left:10px">退出登录</div>
                                             </div>
@@ -67,7 +67,7 @@
                         <Layout>
                             <Sider hide-trigger :style="{background: '#fff'}">
                             <!-- <Cascader v-model="searchNavText" :data="navUrl.items" filterable></Cascader> -->
-                                <Menu active-name="/overview" theme="light" width="auto" :open-names="[]" :style="{minHeight: (contentHeight-50)+'px'}" accordion @on-select="meunSelect">
+                                <Menu :active-name="activeName" theme="light" width="auto" :open-names="[]" :style="{minHeight: (contentHeight-50)+'px'}" accordion @on-select="meunSelect">
                                     <MenuItem name="/overview">
                                         <Icon type="ios-home"></Icon>
                                         首页
@@ -87,7 +87,7 @@
                                     </Submenu>
                                 </Menu>
                             </Sider>
-                            <Content :style="{padding: '0 24px', background: '#fff'}">
+                            <Content :style="{padding: '0 24px', background: '#fff',}">
                                 <router-view/>
                             </Content>
                         </Layout>
@@ -99,43 +99,59 @@
     </transition>
 </template>
 <script>
-var navUrl = require('../../assets/js/nav.js')
+var navUrl = require("../../assets/js/nav.js");
 var that;
 export default {
-    data(){
-        return{
-            searchNavText:'',
-            contentHeight:0,
-            routes:[],
-            navUrl:navUrl.nav
-        }
-    },
-    watch:{
-        $route(){
-            this.routes = this.$route.matched
-            if(this.$route.fullPath == '/main' || this.$route.fullPath == '/'){
-                this.meunSelect('/overview')
-            }
-        }
-    },
-    mounted(){
-        that = this;
-        this.windowResize()
-        this.routes = this.$route.matched
-        if(this.$route.fullPath == '/main' || this.$route.fullPath == '/'){
-                this.meunSelect('/overview')
-        }
-    },
-    methods:{
-        windowResize(){
-            this.contentHeight = window.innerHeight-64-62-60;
-            $(window).resize(function(){
-                that.contentHeight = window.innerHeight-64-62-60;
-            })
-        },
-        meunSelect(e){
-            this.$router.push(e)
-        }
+  data() {
+    return {
+      activeName:'/overview',
+      user: "",
+      searchNavText: "",
+      contentHeight: 0,
+      routes: [],
+      navUrl: navUrl.nav
+    };
+  },
+  watch: {
+    $route() {
+      this.routes = this.$route.matched;
+      if (this.$route.fullPath == "/main" || this.$route.fullPath == "/") {
+        this.meunSelect("/overview");
+        this.activeName = "/overview"
+      }else{
+          this.activeName = this.$route.fullPath
+      }
     }
-}
+  },
+  mounted() {
+    that = this;
+    if (sessionStorage.getItem("user")) {
+      this.user = JSON.parse(sessionStorage.getItem("user"));
+      this.windowResize();
+      this.routes = this.$route.matched;
+      if (this.$route.fullPath == "/main" || this.$route.fullPath == "/") {
+        this.meunSelect("/overview");
+      }else{
+          this.activeName = this.$route.fullPath
+      }
+    } else {
+      this.$router.push("/login");
+    }
+  },
+  methods: {
+    windowResize() {
+      this.contentHeight = window.innerHeight - 64 - 62 - 60;
+      $(window).resize(function() {
+        that.contentHeight = window.innerHeight - 64 - 62 - 60;
+      });
+    },
+    meunSelect(e) {
+      if (e == "/login") {
+        sessionStorage.removeItem("user");
+        localStorage.setItem("autoLogin",false)
+      }
+      this.$router.push(e);
+    }
+  }
+};
 </script>

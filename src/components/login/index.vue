@@ -7,16 +7,16 @@
             </div>
             <div class="login-panel" >
                 <div style="width:100%;text-align:Center" class="font-title-mini">登录后台开始你的工作</div>
-                <Input v-model="login.phone" size="large" style="margin-top:15px" placeholder="手机号" />
-                <Input v-model="login.password" size="large" style="margin-top:15px" placeholder="密码" />
+                <Input v-model="login.userName" size="large" style="margin-top:15px" placeholder="账号" />
+                <Input v-model="login.passWord" type="password" size="large" style="margin-top:15px" placeholder="密码" />
                 <div class="panel-between" style="margin-top:15px"> 
-                    <Checkbox >记住密码</Checkbox>
-                    <Checkbox >自动登录</Checkbox>
+                    <Checkbox v-model="remember">记住密码</Checkbox>
+                    <Checkbox v-model="autoLogin">自动登录</Checkbox>
                 </div>
-                <Button type="primary" size="large" style="margin-top:15px" long>登录</Button>
+                <Button type="primary" size="large" style="margin-top:15px" :loading="registLoading" @click="registSubmit()" long>登录</Button>
                 <div class="panel-between" style="margin-top:15px">
                     <a href="#" @click="showModal = true" >忘记密码?</a>
-                    <a href="#" @click="regModal = true">注册</a>
+                    <router-link to="/register"><a href="#" >注册</a></router-link>
                 </div>
             </div>
             <div style="width:100%;text-align:center;margin-top:40px" class="font-grey">version 2018 版权归 浙江大家地理信息科技有限公司 所有</div>
@@ -27,27 +27,7 @@
                 <p><img src="../../assets/img/wxp.jpg" width="100%" alt=""></p>
             </Modal>
 
-            <Modal v-model="regModal" title="注册" width="400" ok-text="立即注册" @on-cancel="registReset('register')" @on-ok="registSubmit('register')">
-                <Form ref="register" :model="register" :rules="ruleRegister" :label-width="80" :loading="registLoading" :mask-closable="false">
-                    <FormItem label="账号类型" prop="type">
-                        <Select v-model="register.type" size="large"  placeholder="账号类型">
-                            <Option value="员工" >员工</Option>
-                            <Option value="缴费平台" >缴费平台</Option>
-                            <Option value="达咖平台" >达咖平台</Option>
-                            <Option value="民宿平台" >民宿平台</Option>
-                        </Select>
-                    </FormItem>
-                    <FormItem label="手机号" prop="phone">
-                        <Input v-model="register.phone" size="large" placeholder="手机号" />
-                    </FormItem>
-                    <FormItem label="密码" prop="password">
-                        <Input v-model="register.password" size="large" placeholder="密码"  />
-                    </FormItem>
-                    <FormItem label="确认密码" prop="repwd">
-                        <Input v-model="register.repwd" size="large" placeholder="确认密码"  />
-                    </FormItem>
-                </Form>
-            </Modal>
+        
         </div>
     </transition>
 </template>
@@ -58,43 +38,58 @@ body {
 </style>
 
 <script>
+var that;
 export default {
   data() {
     return {
       login: {
-        phone: "",
-        password: ""
+        userName: "",
+        passWord: ""
       },
-      registLoading:false,
+      remember:false,
+      autoLogin:false,
+      registLoading: false,
       regModal: false,
-      showModal: false,
-      register: {
-        type: "",
-        phone: "",
-        password: "",
-        repwd: ""
-      },
-      ruleRegister: {
-        type: [{ required: true, message: "账号类型必填", trigger: "change" }],
-        phone: [{ required: true, message: "手机号必填", trigger: "blur" }],
-        password: [
-          { required: true, message: "密码不能为空", trigger: "blur" }
-        ],
-        repwd: [
-          { required: true, message: "确认密码不能为空", trigger: "blur" }
-        ]
-      }
+      showModal: false
     };
   },
-  mounted() {},
+  mounted() {
+    that = this;
+    if(localStorage.getItem('userName')){
+      this.login.userName = localStorage.getItem('userName')
+      this.login.passWord = localStorage.getItem('passWord')
+    }
+    if(localStorage.getItem('remember')){
+      this.remember = true
+    }
+    if(localStorage.getItem('autoLogin') && localStorage.getItem('autoLogin') == true){
+      this.remember = true
+      this.autoLogin = true
+      this.registSubmit()
+    }
+  },
   methods: {
-    registSubmit(name) {
+    registSubmit() {
       this.registLoading = true
-      this.$refs[name].validate(valid => {
-        if (valid) {
-          this.$Message.success("Success!");
-        } else {
-          this.$Message.error("Fail!");
+      $.ajax({
+        url: sessionStorage.getItem("API") + "app/login",
+        data: this.login,
+        dataType: "json",
+        method: "post",
+        success(res) {
+          that.registLoading = false
+          if (res.code) {
+            sessionStorage.setItem("user", JSON.stringify(res.params.msg));
+            that.$router.push({ path: "/" });
+
+            localStorage.setItem('remember',that.remember)
+            localStorage.setItem('autoLogin',that.autoLogin)
+
+            if(that.remember){
+              localStorage.setItem('userName',that.login.userName)
+              localStorage.setItem('passWord',that.login.passWord)
+            }
+          }
         }
       });
     },

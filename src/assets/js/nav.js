@@ -6,13 +6,13 @@ var nav = {
             {label:'公告列表',path:'#'},
         ]},
         {icon:'network',label:'组织单位',children:[
-            {label:'所有单位',path:'/#'},
-            {label:'新增单位',path:'/#'},
+            {label:'所有单位',path:'/school'},
+            {label:'新增单位',path:'/schoolAdd'},
             {label:'用户管理',path:'#'},
         ]},
         {icon:'ios-book',label:'学生管理',children:[
-            {label:'学生列表',path:'/#'},
-            {label:'新增学生',path:'/#'},
+            {label:'学生列表',path:'/student'},
+            {label:'新增学生',path:'/studentAdd'},
         ]},
         {icon:'social-hackernews',label:'缴费管理',children:[
             {label:'缴费项列表',path:'/#'},

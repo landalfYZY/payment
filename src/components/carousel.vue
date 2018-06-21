@@ -7,7 +7,7 @@
                         <Button type="ghost" ><Icon type="trash-a"></Icon> 删除</Button>
                         <Button type="ghost" ><Icon type="android-arrow-down" color="#ff9933"></Icon> 下架</Button>
                         <Button type="ghost" ><Icon type="android-arrow-up" color="#009966"></Icon> 上架</Button>
-                        <Button type="ghost" @click="navTo('/carouselAdd')"><Icon type="android-add"></Icon> 添加广告</Button>
+                        <Button type="ghost" @click="carouselModel = true"><Icon type="android-add"></Icon> 添加广告</Button>
                     </ButtonGroup>
                 </div>
                 <div class="panel-end">
@@ -23,15 +23,23 @@
             <div class="panel-end" style="margin-top:15px">
                 <Page :total="15230" size="small" show-total show-elevator :page-size="pageSize"></Page>
             </div>
-            
+            <Modal v-model="carouselModel" title="新增广告"
+              @on-ok="ok" @on-cancel="cancel">
+              <carAdd></carAdd>
+          </Modal>
         </div>
     </transition>
 </template>
 
 <script>
+import carAdd from './carouselAdd.vue'
 export default {
+  components:{
+    carAdd
+  },
   data() {
     return {
+      carouselModel:false,
       pageSize: 10,
       pageSizeList: [
         { label: "每页 10 条", value: 10 },
