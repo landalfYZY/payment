@@ -3,16 +3,16 @@
         <div>
             <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120">
                 <FormItem label="缴费项标题" prop="describe">
-                    <Input v-model="formValidate.describe" placeholder="缴费项标题" />
+                    <Input v-model="formValidate.describe" style="width: 250px" placeholder="缴费项标题" />
                 </FormItem>
                 <FormItem label="缴费金额" prop="amount">
-                    <Input v-model="formValidate.amount" placeholder="缴费金额" />
+                    <Input v-model="formValidate.amount" style="width: 250px" placeholder="缴费金额" />
                 </FormItem>
                 <FormItem label="是否是必缴费用" prop="need">
                         <el-switch v-model="formValidate.need" active-text="是" inactive-text="否"> </el-switch>
                 </FormItem>
                 <FormItem label="截至日期" >
-                       <DatePicker v-model="formValidate.jzTime" type="date" placeholder="截至日期" style="width: 200px"></DatePicker>
+                       <DatePicker  format="yyyy-MM-dd" v-model="formValidate.jzTime" type="date" placeholder="截至日期" style="width: 200px"></DatePicker>
                 </FormItem>
                 <FormItem label="缴费名单选择" prop="query">
                        <Button type="ghost" @click="dialogVisible = true">点击选择缴费名单</Button><span v-if="formValidate.query != ''"> 已选</span>
@@ -41,7 +41,7 @@ export default {
   },
   data() {
     return {
-        dialogVisible:false,
+      dialogVisible:false,
       formValidate: {
         appid: JSON.parse(sessionStorage.getItem("user")).sunwouId,
         describe: "",
@@ -60,8 +60,11 @@ export default {
         need: [
           { required: true}
         ],
+        jzTime: [
+          { required: true, message: "您还没选截至时间",}
+        ],
         query: [
-          { required: true}
+          { required: true, message: "您还没选缴费名单"}
         ],
         
       }

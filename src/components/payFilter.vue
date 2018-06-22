@@ -20,24 +20,31 @@ export default {
   methods: {
     getSchoolList(e){
         var li = JSON.parse(JSON.stringify(that.schoolList))
-        // for(var i in li){
-        //     if(li[i].checked){
-        //         delete li[i].children
-        //     }else{
-        //         for(var j in li[i].children){
-        //             if(li[i].children[j].checked){
-        //                 delete li[i].children[j].children
-        //             }else{
-        //                 for(var k in li[i].children[j].children){
-        //                     if(!li[i].children[j].children[k].checked){
-
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-        sessionStorage.setItem('tempPay',JSON.stringify(that.schoolList))
+        var scl = []
+        for(var i in li){
+          if(li[i].checked){
+            scl.push({label:li[i].name,value:li[i].sunwouId})
+          }else{
+            var tempo = {label:li[i].name,value:li[i].sunwouId,children:[]}
+            for(var j in li[i].children){
+              if(li[i].children[j].checked){
+                tempo.children.push({label:li[i].children[j]._id,value:li[i].children[j]._id})
+              }else{
+                var tmo = {label:li[i].children[j]._id,value:li[i].children[j]._id,children:[]}
+                for(var k in li[i].children[j].children){
+                  if(li[i].children[j].children[k].checked){
+                    tmo.children.push({label:li[i].children[j].children[k]._id,value:li[i].children[j].children[k]._id})
+                  }
+                }
+                tempo.children.push(tmo)
+              }
+              
+            }
+            scl.push(tempo)
+          }
+          
+        }
+        sessionStorage.setItem('tempPay',JSON.stringify(scl))
     },
     loadData(item, callback) {
       if (item.name) {
