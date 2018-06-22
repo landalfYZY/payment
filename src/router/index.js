@@ -11,7 +11,10 @@ import schoolAdd from '../components/schoolAdd'
 import school from '../components/school'
 import student from '../components/student'
 import studentAdd from '../components/studentAdd'
-
+import own from '../components/own'
+import wxuser from '../components/wxuser'
+import payAdd from '../components/payAdd'
+import payFilter from '../components/payFilter'
 Vue.use(Router)
 
 export default new Router({
@@ -26,6 +29,10 @@ export default new Router({
       { path: '/school', name: '单位列表', component: school },
       { path: '/student', name: '学生列表', component: student },
       { path: '/studentAdd', name: '新增学生', component: studentAdd },
+      { path: '/own', name: '个人设置', component: own },
+      { path: '/wxuser', name: '微信用户', component: wxuser },
+      { path: '/payAdd', name: '新增缴费项', component: payAdd },
+      { path: '/payFilter', name: '缴费项过滤', component: payFilter },
     ]}
   ]
 })

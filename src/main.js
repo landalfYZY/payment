@@ -13,7 +13,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 Vue.config.productionTip = false
 Vue.use(iView)
 Vue.use(ElementUI);
-sessionStorage.setItem('API','http://192.168.31.250/frame/')
+sessionStorage.setItem('API','https://www.sunwou.com/jf/')
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

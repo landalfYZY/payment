@@ -13,10 +13,10 @@
                                     <div class="logo-text font-title-sm">大家地理缴费系统</div>
                                 </div><!-- logo end -->
                                 <div class="layout-nav" style="margin-left:20px">
-                                    <!-- <MenuItem name="overview">
+                                    <MenuItem name="overview">
                                         <Icon type="ios-navigate"></Icon>
-                                        OA办公
-                                    </MenuItem> -->
+                                        微信客服
+                                    </MenuItem>
                                 </div>
                             </div>
                             <div class="panel-end item-center">
@@ -35,13 +35,13 @@
                                         </div>
                                     </a>
                                     <DropdownMenu slot="list" >
-                                        <!-- <DropdownItem>
-                                            <div class="smeun-item panel-start item-center">
+                                        <DropdownItem>
+                                            <div class="smeun-item panel-start item-center" @click="meunSelect('/own')">
                                                 <Icon type="ios-gear-outline" size="16"></Icon>
-                                                <div style="margin-left:10px">个人设置</div>
+                                                <div style="margin-left:10px">主体信息</div>
                                             </div>
                                         </DropdownItem>
-                                        <DropdownItem>
+                                        <!-- <DropdownItem>
                                             <div class="smeun-item panel-start item-center">
                                                 <Icon type="ionic" size="16"></Icon>
                                                 <div style="margin-left:10px">安全中心</div>

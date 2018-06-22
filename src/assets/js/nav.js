@@ -8,7 +8,7 @@ var nav = {
         {icon:'network',label:'组织单位',children:[
             {label:'所有单位',path:'/school'},
             {label:'新增单位',path:'/schoolAdd'},
-            {label:'用户管理',path:'#'},
+            {label:'用户管理',path:'/wxuser'},
         ]},
         {icon:'ios-book',label:'学生管理',children:[
             {label:'学生列表',path:'/student'},
@@ -16,6 +16,7 @@ var nav = {
         ]},
         {icon:'social-hackernews',label:'缴费管理',children:[
             {label:'缴费项列表',path:'/#'},
+            {label:'新增缴费项',path:'/payAdd'},
             {label:'缴费记录',path:'/#'},
         ]},
         {icon:'social-python',label:'银行卡管理',children:[

@@ -4,9 +4,7 @@
             <div class="panel-between">
                 <div class="panel-start item-center">
                     <ButtonGroup>
-                        <Button type="ghost" ><Icon type="trash-a"></Icon> 删除</Button>
-                        <Button type="ghost" @click="navTo('/studentAdd')"><Icon type="android-add"></Icon> 添加学生</Button>
-                        <Button type="ghost" @click="studentModel = true,getSchool()"><Icon type="android-add"></Icon> 导入学生</Button>
+                        <Button type="ghost" @click="navTo('/studentAdd')"><Icon type="android-add"></Icon> 发送短信</Button>
                     </ButtonGroup>
                     <span class="font-grey" style="margin-left:10px">可以按回车进行筛选</span>
                 </div>
@@ -18,20 +16,26 @@
             </div>
             <div style="margin-top:15px" >
                 <Row :gutter="5">
-                    <Col :span="4">
-                        <Input v-model="search1" placeholder="姓名 查找" @input="search('name',1)"  @keydown.enter.native="changePageSize()" />
+                    <Col :span="3">
+                        <Input v-model="search1" placeholder="姓名 查找" @input="search('realName',1)"  @keydown.enter.native="changePageSize()" />
                     </Col>
-                    <Col :span="4">
-                        <Input v-model="search2" placeholder="身份证 查找" @input="search('sunwouId',2)" @keydown.enter.native="changePageSize()" />
+                    <Col :span="3">
+                        <Input v-model="search2" placeholder="手机号 查找" @input="search('phone',2)" @keydown.enter.native="changePageSize()" />
                     </Col>
-                    <Col :span="4">
-                        <Input v-model="search3" placeholder="性别 查找" @input="search('gender',3)" @keydown.enter.native="changePageSize()" />
+                    <Col :span="3">
+                        <Select v-model="search3" placeholder="性别 查找" @on-change="search('gender',3),changePageSize()"  @keydown.enter.native="changePageSize()">
+                            <Option value="0" >未知</Option><Option value="1" >男</Option><Option value="2" >女</Option>
+                        </Select>
+                        <!-- <Input v-model="search3" placeholder="性别 查找" @input="search('gender',3)" @keydown.enter.native="changePageSize()" /> -->
                     </Col>
-                    <Col :span="4">
-                        <Input v-model="search4" placeholder="入学年份 查找" @input="search('schoolTime',4)" @keydown.enter.native="changePageSize()" />
+                    <Col :span="3">
+                        <Input v-model="search4" placeholder="昵称 查找" @input="search('nickName',4)" @keydown.enter.native="changePageSize()" />
                     </Col>
-                    <Col :span="4">
-                        <Input v-model="search5" placeholder="班级 查找"  @input="search('cl',5)" @keydown.enter.native="changePageSize()" /> 
+                    <Col :span="3">
+                        <Input v-model="search5" placeholder="省份 查找"  @input="search('province',5)" @keydown.enter.native="changePageSize()" /> 
+                    </Col>
+                    <Col :span="3">
+                        <Input v-model="search5" placeholder="城市 查找"  @input="search('city',5)" @keydown.enter.native="changePageSize()" /> 
                     </Col>
                     <Col :span="4">
                         <ButtonGroup>
@@ -78,8 +82,8 @@ export default {
   },
   data() {
     return {
+      tableLoading: false,
       user: JSON.parse(sessionStorage.getItem("user")),
-      tableLoading:false,
       api: sessionStorage.getItem("API"),
       schoolId: "",
       schoolList: [],
@@ -94,46 +98,53 @@ export default {
         { label: "每页 50 条", value: 50 },
         { label: "每页 100 条", value: 100 }
       ],
-      search1: "",search2: "",search3: "",search4: "",search5: "",
+      search1: "",
+      search2: "",
+      search3: "",
+      search4: "",
+      search5: "",
       classList: [],
       columns: [
         { type: "selection", width: 60, align: "center" },
-        { title: "姓名", key: "name" },
-        { title: "身份证", key: "sunwouId" },
-        { title: "性别", key: "gender", },
-        { title: "入学年份", key: "schoolTime" },
-        { title: "班级", key: "cl" },
-        { title: "创建时间", key: "createTime" },
         {
-          title: "操作",
-          key: "action",
-          width: 150,
-          align: "center",
+          title: "头像",width:75,
+          key: "avatarUrl",
           render: (h, params) => {
-            return h("ButtonGroup", [
-              h(
-                "Button",
-                {
-                  props: { type: "ghost", icon: "ios-compose-outline" },
-                  on: {
-                    click: () => {
-                      console.log(params);
-                    }
-                  }
-                },
-                "编辑"
-              ),
-              h("Button", {
-                props: { type: "ghost", icon: "ios-trash-outline" },
-                on: {
-                  click: () => {
-                    console.log(params);
-                  }
-                }
-              })
-            ]);
+            var props = { size: "large" };
+            if (params.row.avatarUrl) {
+              props.src = params.row.avatarUrl;
+            } else {
+              props.icon = "person";
+            }
+            var dj = h("Avatar", {
+              props: props
+            });
+            return dj;
           }
-        }
+        },
+        { title: "姓名", key: "realName" },
+        { title: "手机号", key: "phone" },
+        {
+          title: "性别",
+          key: "gender",
+          render: (h, params) => {
+            var gender = "未获取";
+            if (params.row.gender) {
+              if (params.row.gender == 0) {
+                gender = "未知";
+              } else if (params.row.gender == 1) {
+                gender = "男";
+              } else if (params.row.gender == 2) {
+                gender = "女";
+              }
+            }
+            return h("span", gender);
+          }
+        },
+        { title: "昵称", key: "nickName" },
+        { title: "省份", key: "province" },
+        { title: "城市", key: "city" },
+        { title: "注册时间", key: "createTime" }
       ],
       data: [],
       query: {
@@ -154,15 +165,14 @@ export default {
     that.getList();
   },
   methods: {
-    
     handleClose() {
       this.studentModel = false;
     },
-    clearFilter(){
-      var li = ['name','sunwouId','gender','schoolTime','cl']
-      for(var i=0;i<5;i++){
-          this['search'+parseInt(i+1)] = '';
-          this.search(li[i],parseInt(i+1))
+    clearFilter() {
+      var li = ["realName", "phone", "gender", "nickName", "province", "city"];
+      for (var i = 0; i < 5; i++) {
+        this["search" + parseInt(i + 1)] = "";
+        this.search(li[i], parseInt(i + 1));
       }
       this.getList();
     },
@@ -192,31 +202,7 @@ export default {
     fileSuccess(e) {
       that.excelUrl = e.msg;
     },
-    getSchool() {
-      $.ajax({
-        url: sessionStorage.getItem("API") + "school/find",
-        data: {
-          query: JSON.stringify({
-            fields: [],
-            wheres: [
-              { value: "isDelete", opertionType: "equal", opertionValue: false }
-            ],
-            sorts: [{ value: "createTime", asc: false }],
-            pages: {
-              currentPage: 1,
-              size: 10000
-            }
-          })
-        },
-        method: "post",
-        dataType: "json",
-        success(res) {
-          if (res.code) {
-            that.schoolList = res.params.msg;
-          }
-        }
-      });
-    },
+
     changePageSize() {
       this.getList();
     },
@@ -224,7 +210,7 @@ export default {
       this.query.pages.currentPage = e;
       this.getList();
     },
-    search(tag,num) {
+    search(tag, num) {
       var temp = -1;
       for (var i in this.query.wheres) {
         if (this.query.wheres[i].value == tag) {
@@ -233,24 +219,30 @@ export default {
       }
 
       if (temp == -1) {
-        this.query.wheres.push({
-          value: tag,
-          opertionType: "like",
-          opertionValue: this['search'+num]
-        });
+        if (this["search" + num] != "") {
+          this.query.wheres.push({
+            value: tag,
+            opertionType: "like",
+            opertionValue: this["search" + num]
+          });
+        }
       } else {
-        this.query.wheres[temp].opertionValue = this['search'+num];
+        if (this["search" + num] == "") {
+          this.query.wheres.splice(temp);
+        } else {
+          this.query.wheres[temp].opertionValue = this["search" + num];
+        }
       }
     },
     getList() {
-      this.tableLoading = true
+      this.tableLoading = true;
       $.ajax({
-        url: sessionStorage.getItem("API") + "user/find",
+        url: sessionStorage.getItem("API") + "wxuser/find",
         data: { query: JSON.stringify(this.query) },
         method: "post",
         dataType: "json",
         success(res) {
-          that.tableLoading = false
+          that.tableLoading = false;
           if (res.code) {
             that.data = res.params.msg;
             that.total = res.params.total;
