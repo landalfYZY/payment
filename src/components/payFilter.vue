@@ -66,20 +66,24 @@ export default {
       }
     },
     getSchool() {
-      $.ajax({
-        url: sessionStorage.getItem("API") + "school/find",
-        data: {
-          query: JSON.stringify({
-            fields: ["name"],
+      var query = {
+            fields: [],
             wheres: [
               { value: "isDelete", opertionType: "equal", opertionValue: false }
             ],
-            sorts: [{ value: "createTime", asc: true }],
+            sorts: [{ value: "createTime", asc: false }],
             pages: {
               currentPage: 1,
               size: 10000
             }
-          })
+          }
+      if(!JSON.parse(sessionStorage.getItem('user')).appid){
+        query.wheres.push({value:'sunwouId',opertionType:'equal',opertionValue:JSON.parse(sessionStorage.getItem('user')).sunwouId})
+      }
+      $.ajax({
+        url: sessionStorage.getItem("API") + "school/find",
+        data: {
+          query: JSON.stringify(query)
         },
         method: "post",
         dataType: "json",

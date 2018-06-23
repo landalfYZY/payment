@@ -15,6 +15,11 @@ import own from '../components/own'
 import wxuser from '../components/wxuser'
 import payAdd from '../components/payAdd'
 import payFilter from '../components/payFilter'
+import bankCard from '../components/bankCard'
+import payList from '../components/payList'
+import orderlist from '../components/orderlist'
+import bankCardAdd from '../components/bankCardAdd'
+
 Vue.use(Router)
 
 export default new Router({
@@ -33,6 +38,10 @@ export default new Router({
       { path: '/wxuser', name: '微信用户', component: wxuser },
       { path: '/payAdd', name: '新增缴费项', component: payAdd },
       { path: '/payFilter', name: '缴费项过滤', component: payFilter },
+      { path: '/bankCard', name: '银行卡列表', component: bankCard },
+      { path: '/payList', name: '缴费项列表', component: payList },
+      { path: '/orderlist', name: '订单列表', component: orderlist },
+      { path: '/bankCardAdd', name: '添加银行卡', component: bankCardAdd },
     ]}
   ]
 })

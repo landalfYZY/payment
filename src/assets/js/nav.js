@@ -1,11 +1,11 @@
 var nav = {
     config:{},
     items:[
-        {icon:'speakerphone',label:'通知广告',children:[
+        {icon:'speakerphone',label:'通知广告',zt:true,children:[
             {label:'广告列表',path:'/carousel'},
             {label:'公告列表',path:'#'},
         ]},
-        {icon:'network',label:'组织单位',children:[
+        {icon:'network',label:'组织单位',zt:true,children:[
             {label:'所有单位',path:'/school'},
             {label:'新增单位',path:'/schoolAdd'},
             {label:'用户管理',path:'/wxuser'},
@@ -15,12 +15,12 @@ var nav = {
             {label:'新增学生',path:'/studentAdd'},
         ]},
         {icon:'social-hackernews',label:'缴费管理',children:[
-            {label:'缴费项列表',path:'/#'},
-            {label:'新增缴费项',path:'/payAdd'},
-            {label:'缴费记录',path:'/#'},
+            {label:'缴费项列表',path:'/payList'},
+            {label:'新增缴费项',path:'/payAdd'}
         ]},
         {icon:'social-python',label:'银行卡管理',children:[
-            {label:'银行卡列表',path:'/#'}
+            {label:'银行卡列表',path:'/bankCard'},
+            {label:'添加银行卡',path:'/bankCardAdd'}
         ]},
         {icon:'ios-paper',label:'日志',children:[
             {label:'操作日志',path:'#'},

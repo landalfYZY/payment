@@ -26,7 +26,6 @@
                         <Select v-model="search3" placeholder="性别 查找" @on-change="search('gender',3),changePageSize()"  @keydown.enter.native="changePageSize()">
                             <Option value="0" >未知</Option><Option value="1" >男</Option><Option value="2" >女</Option>
                         </Select>
-                        <!-- <Input v-model="search3" placeholder="性别 查找" @input="search('gender',3)" @keydown.enter.native="changePageSize()" /> -->
                     </Col>
                     <Col :span="3">
                         <Input v-model="search4" placeholder="昵称 查找" @input="search('nickName',4)" @keydown.enter.native="changePageSize()" />
@@ -150,6 +149,11 @@ export default {
       query: {
         fields: [],
         wheres: [
+          {
+            value: "appid",
+            opertionType: "equal",
+            opertionValue: JSON.parse(sessionStorage.getItem("user")).sunwouId
+          },
           { value: "isDelete", opertionType: "equal", opertionValue: false }
         ],
         sorts: [{ value: "createTime", asc: false }],

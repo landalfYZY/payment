@@ -12,15 +12,15 @@
                         <el-switch v-model="formValidate.need" active-text="是" inactive-text="否"> </el-switch>
                 </FormItem>
                 <FormItem label="截至日期" >
-                       <DatePicker  format="yyyy-MM-dd" v-model="formValidate.jzTime" type="date" placeholder="截至日期" style="width: 200px"></DatePicker>
+                       <DatePicker  v-model="formValidate.jzTime" type="date" placeholder="截至日期" style="width: 200px"></DatePicker>
                 </FormItem>
                 <FormItem label="缴费名单选择" prop="query">
                        <Button type="ghost" @click="dialogVisible = true">点击选择缴费名单</Button><span v-if="formValidate.query != ''"> 已选</span>
                        <el-dialog title="选择缴费名单" :visible.sync="dialogVisible"  width="400px" >
                             <payFilter></payFilter>
                             <span slot="footer" class="dialog-footer">
-                                <el-button @click="dialogVisible = false">取 消</el-button>
-                                <el-button type="primary" @click="getMsgs(),dialogVisible = false">确 定</el-button>
+                                <Button @click="dialogVisible = false">取 消</Button>
+                                <Button type="primary" @click="getMsgs(),dialogVisible = false">确 定</Button>
                             </span>
                         </el-dialog>
                 </FormItem>
@@ -33,22 +33,24 @@
     </transition>
 </template>
 <script>
-import payFilter from './payFilter.vue'
+import payFilter from "./payFilter.vue";
 var that;
 export default {
-  components:{
-      payFilter
+  components: {
+    payFilter
   },
   data() {
     return {
-      dialogVisible:false,
+      dialogVisible: false,
       formValidate: {
-        appid: JSON.parse(sessionStorage.getItem("user")).sunwouId,
+        appid: JSON.parse(sessionStorage.getItem('user')).appid ? JSON.parse(sessionStorage.getItem("user")).sunwouId:JSON.parse(sessionStorage.getItem("user")).appId,
         describe: "",
-        need:false,
-        amount:0,
-        jzTime:'',
-        query:''
+        need: false,
+        amount: 0,
+        jzTime: "",
+        query: "",
+        name:JSON.parse(sessionStorage.getItem("user")).userName,
+        parentId:JSON.parse(sessionStorage.getItem("user")).sunwouId
       },
       ruleValidate: {
         describe: [
@@ -57,16 +59,9 @@ export default {
         amount: [
           { required: true, message: "缴费金额不能为空", trigger: "blur" }
         ],
-        need: [
-          { required: true}
-        ],
-        jzTime: [
-          { required: true, message: "您还没选截至时间",}
-        ],
-        query: [
-          { required: true, message: "您还没选缴费名单"}
-        ],
-        
+        need: [{ required: true }],
+        jzTime: [{ required: true, message: "您还没选截至时间" }],
+        query: [{ required: true, message: "您还没选缴费名单" }]
       }
     };
   },
@@ -74,11 +69,37 @@ export default {
     that = this;
   },
   methods: {
-    getMsgs(){
-        console.log(sessionStorage.getItem('tempPay'))
-        this.formValidate.query = sessionStorage.getItem('tempPay')
+    getMsgs() {
+      this.formValidate.query = sessionStorage.getItem("tempPay");
     },
     handleSubmit(name) {
+      Date.prototype.Format = function(fmt) {
+        //author: meizz
+        var o = {
+          "M+": this.getMonth() + 1, //月份
+          "d+": this.getDate(), //日
+          "h+": this.getHours(), //小时
+          "m+": this.getMinutes(), //分
+          "s+": this.getSeconds(), //秒
+          "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+          S: this.getMilliseconds() //毫秒
+        };
+        if (/(y+)/.test(fmt))
+          fmt = fmt.replace(
+            RegExp.$1,
+            (this.getFullYear() + "").substr(4 - RegExp.$1.length)
+          );
+        for (var k in o)
+          if (new RegExp("(" + k + ")").test(fmt))
+            fmt = fmt.replace(
+              RegExp.$1,
+              RegExp.$1.length == 1
+                ? o[k]
+                : ("00" + o[k]).substr(("" + o[k]).length)
+            );
+        return fmt;
+      };
+      this.formValidate.jzTime = new Date(this.formValidate.jzTime).Format("yyyy-MM-dd");
       this.$refs[name].validate(valid => {
         if (valid) {
           if (that.formValidate.passWord == that.formValidate.pwd) {
@@ -93,7 +114,7 @@ export default {
                     title: "缴费项添加成功",
                     desc: that.formValidate.describe
                   });
-                  
+                  that.$router.push({path:'/payList'})
                 } else {
                   that.$message.error(res.msg);
                 }

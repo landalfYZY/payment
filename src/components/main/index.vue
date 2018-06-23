@@ -72,7 +72,7 @@
                                         <Icon type="ios-home"></Icon>
                                         首页
                                     </MenuItem>
-                                    <Submenu v-for="(item,index) in navUrl.items" :key="index" :name="index" >
+                                    <Submenu v-for="(item,index) in navUrl.items" :key="index" :name="index" v-show="user.appid || !item.zt">
                                         <template slot="title">
                                             <Icon :type="item.icon"></Icon>
                                             {{item.label}}

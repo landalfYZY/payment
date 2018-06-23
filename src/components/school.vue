@@ -17,7 +17,7 @@
                     </Select>
                 </div>
             </div>
-            <Table border :columns="columns" :data="data" style="margin-top:15px"></Table>
+            <Table border :columns="columns" :data="data" style="margin-top:15px" :loading="tableLoading"></Table>
             <div class="panel-end" style="margin-top:15px">
                 <Page :total="total" size="small" show-total show-elevator :page-size="query.pages.size" :on-change="changePage"></Page>
             </div>
@@ -36,6 +36,7 @@ export default {
   data() {
     return {
       total:0,
+      tableLoading:false,
       carouselModel:false,
       pageSizeList: [
         { label: "每页 10 条", value: 10 },
@@ -86,6 +87,7 @@ export default {
       query:{
           fields:[],
           wheres:[
+              {value:'appId',opertionType:'equal',opertionValue:JSON.parse(sessionStorage.getItem('user')).sunwouId},
               {value:'isDelete',opertionType:'equal',opertionValue:false},
           ],
           sorts:[
@@ -126,12 +128,14 @@ export default {
           this.getList()
       },
       getList(){
+          this.tableLoading = true;
           $.ajax({
               url:sessionStorage.getItem('API') + 'school/find',
               data:{query:JSON.stringify(this.query)},
               method:'post',
               dataType:'json',
               success(res){
+                  that.tableLoading = false;
                   if(res.code){
                       that.data = res.params.msg;
                       that.total = res.params.total
