@@ -22,16 +22,16 @@ var nav = {
             {label:'银行卡列表',path:'/bankCard'},
             {label:'添加银行卡',path:'/bankCardAdd'}
         ]},
-        {icon:'ios-paper',label:'日志',children:[
-            {label:'操作日志',path:'#'},
-            {label:'系统日志',path:'#'},
-            {label:'系统更新日志',path:'#'},
-            {label:'异常分析',path:'#'}
-        ]},
-        {icon:'ios-gear',label:'系统设置',children:[
-            {label:'个人操作设置',path:'#'},
-            {label:'系统基础设置',path:'#'}
-        ]},
+        // {icon:'ios-paper',label:'日志',children:[
+        //     {label:'操作日志',path:'#'},
+        //     {label:'系统日志',path:'#'},
+        //     {label:'系统更新日志',path:'#'},
+        //     {label:'异常分析',path:'#'}
+        // ]},
+        // {icon:'ios-gear',label:'系统设置',children:[
+        //     {label:'个人操作设置',path:'#'},
+        //     {label:'系统基础设置',path:'#'}
+        // ]},
     ]
 }
 

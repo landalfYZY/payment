@@ -5,6 +5,7 @@
                 <div class="panel-start item-center">
                     <ButtonGroup>
                         <Button type="ghost" @click="navTo('/studentAdd')"><Icon type="android-add"></Icon> 发送短信</Button>
+                        <Button type="ghost" @click="outputData()"><Icon type="ios-upload-outline"></Icon> 导出数据</Button>
                     </ButtonGroup>
                     <span class="font-grey" style="margin-left:10px">可以按回车进行筛选</span>
                 </div>
@@ -34,7 +35,7 @@
                         <Input v-model="search5" placeholder="省份 查找"  @input="search('province',5)" @keydown.enter.native="changePageSize()" /> 
                     </Col>
                     <Col :span="3">
-                        <Input v-model="search5" placeholder="城市 查找"  @input="search('city',5)" @keydown.enter.native="changePageSize()" /> 
+                        <Input v-model="search6" placeholder="城市 查找"  @input="search('city',6)" @keydown.enter.native="changePageSize()" /> 
                     </Col>
                     <Col :span="4">
                         <ButtonGroup>
@@ -44,12 +45,11 @@
                     </Col>
                 </Row>
             </div>
-            <Table border :columns="columns" :data="data" style="margin-top:15px" :loading="tableLoading"></Table>
+            <Table ref="selection" border :columns="columns" :data="data" style="margin-top:15px" :loading="tableLoading"></Table>
             <div class="panel-end" style="margin-top:15px">
                 <Page :total="total" size="small" show-total show-elevator :page-size="query.pages.size" @on-change="changePage"></Page>
             </div>
 
-    
             <el-dialog title="导入学生" :visible.sync="studentModel" width="30%" :before-close="handleClose">
                 <Form  label-position="top">
                     <FormItem label="选择一所单位">
@@ -101,7 +101,7 @@ export default {
       search2: "",
       search3: "",
       search4: "",
-      search5: "",
+      search5: "",search6:'',
       classList: [],
       columns: [
         { type: "selection", width: 60, align: "center" },
@@ -150,7 +150,7 @@ export default {
         fields: [],
         wheres: [
           {
-            value: "appid",
+            value: "appId",
             opertionType: "equal",
             opertionValue: JSON.parse(sessionStorage.getItem("user")).sunwouId
           },
@@ -169,12 +169,28 @@ export default {
     that.getList();
   },
   methods: {
+    outputData() {
+      if(this.data.length == 0){
+        this.$Message.warning("无数据可导出");
+      }else{
+        this.$refs.selection.exportCsv({
+          filename:
+            "user-" +
+            new Date().getFullYear() +
+            (new Date().getMonth() + 1) +
+            new Date().getDate(),
+          columns: this.columns,
+          data: this.data
+        });
+      }
+      
+    },
     handleClose() {
       this.studentModel = false;
     },
     clearFilter() {
       var li = ["realName", "phone", "gender", "nickName", "province", "city"];
-      for (var i = 0; i < 5; i++) {
+      for (var i = 0; i < 6; i++) {
         this["search" + parseInt(i + 1)] = "";
         this.search(li[i], parseInt(i + 1));
       }

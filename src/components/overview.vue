@@ -40,7 +40,7 @@
                             </Col>
                             <Col :span="16">
                                 <div>
-                                    <div class="font-grey" style="font-size:30px">212232</div>
+                                    <div class="font-grey" style="font-size:30px">{{studentNum}}</div>
                                     <div class="" >学生数量</div>
                                 </div>
                             </Col>
@@ -69,17 +69,50 @@
 <script>
 import G2 from "@antv/g2";
 import { View } from "@antv/data-set";
+var that;
 export default {
-    data(){
-        return {
-
+  data() {
+    return {
+        studentNum:0
+    };
+  },
+  mounted() {
+    that = this;
+  },
+  methods: {
+    getStudentNum() {
+      $.ajax({
+        url: sessionStorage.getItem(API) + "user/find",
+        data: {
+          query: JSON.stringify({
+            fields: [],
+            wheres: [
+              {
+                value: JSON.parse(sessionStorage.getItem("user")).appid
+                  ? "appid"
+                  : "schoolId",
+                opertionType: "equal",
+                opertionValue: JSON.parse(sessionStorage.getItem("user"))
+                  .sunwouId
+              },
+              { value: "isDelete", opertionType: "equal", opertionValue: false }
+            ],
+            sorts: [{ value: "createTime", asc: false }],
+            pages: {
+              currentPage: 1,
+              size: 0
+            }
+          })
+        },
+        dataType:'json',
+        method:'post',
+        success(res){
+            if(res.code){
+                that.studentNum = res.params.total
+            }
         }
-    },
-    mounted(){
-
-    },
-    methods:{
-
+      });
     }
-}
+  }
+};
 </script>

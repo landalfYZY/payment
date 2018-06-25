@@ -4,7 +4,7 @@
             <BackTop></BackTop>
             <Layout >
                 <Header>
-                    <Menu mode="horizontal" theme="dark" active-name="overview" @on-select="meunSelect">
+                    <Menu mode="horizontal" theme="dark"  @on-select="meunSelect">
                         <div class="panel-between">
                             <div class="panel-start item-center">
                                 <!-- logo st -->
@@ -15,7 +15,7 @@
                                 <div class="layout-nav" style="margin-left:20px">
                                     <MenuItem name="overview">
                                         <Icon type="ios-navigate"></Icon>
-                                        微信客服
+                                        操作文档
                                     </MenuItem>
                                 </div>
                             </div>

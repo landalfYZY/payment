@@ -4,15 +4,13 @@
             <div class="panel-between">
                 <div class="panel-start">
                     <ButtonGroup>
-                        <Button type="ghost" ><Icon type="trash-a"></Icon> 删除</Button>
+                        <Button type="ghost" @click="deleteJf()"><Icon type="trash-a"></Icon> 删除</Button>
+                        <Button type="ghost" @click="outputData()"><Icon type="ios-upload-outline"></Icon> 导出数据</Button>
                         <Button type="ghost" @click="navTo('/payAdd')"><Icon type="android-add"></Icon> 添加缴费项</Button>
                     </ButtonGroup>
                 </div>
                 <div class="panel-end">
-                    <Input v-model="searchText" placeholder="关键字搜索" style="width:200px" @keydown.enter.native="search()">
-                        <Button slot="append" icon="ios-search" @click="search()"></Button>
-                    </Input>
-                    <Select v-model="query.pages.size" style="width:100px;margin-left:20px" @change="changePageSize()">
+                    <Select v-model="query.pages.size" style="width:100px;margin-left:20px" @on-change="changePageSize()">
                         <Option v-for="item in pageSizeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                     </Select>
                 </div>
@@ -31,7 +29,7 @@
                         </Select>
                     </Col>
                     <Col :span="4">
-                        <Select v-model="search4" placeholder="缴费状态 查找" @on-change="search('need',3),changePageSize()"  @keydown.enter.native="changePageSize()">
+                        <Select v-model="search4" placeholder="缴费状态 查找" @on-change="search('start',4),changePageSize()"  @keydown.enter.native="changePageSize()">
                             <Option value="false" >关闭</Option><Option value="true" >开启</Option>
                         </Select>
                     </Col>
@@ -43,11 +41,53 @@
                     </Col>
                 </Row>
             </div>
-            <Table border :columns="columns" :data="data" style="margin-top:15px"></Table>
+            <Table border ref="selection"  :columns="columns" :data="data" style="margin-top:15px" @on-selection-change="getSelected"></Table>
             <div class="panel-end" style="margin-top:15px">
                 <Page :total="total" size="small" show-total show-elevator :page-size="query.pages.size" :on-change="changePage"></Page>
             </div>
-            
+            <el-dialog title="修改信息" :visible.sync="studentModel" width="400px" >
+                <Form  label-position="top">
+                    <FormItem label="缴费项名称">
+                        <Input placeholder="缴费项名称" v-model="tempValue.describe" />
+                    </FormItem>
+                    <FormItem label="截止时间" >
+                        <DatePicker v-model="tempValue.jzTime" type="date" format="yyyy-MM-dd" placeholder="截止时间" ></DatePicker>
+                    </FormItem>
+                    <FormItem label="状态" >
+                        <el-switch
+                          v-model="tempValue.start"
+                          active-text="开启缴费"
+                          inactive-text="关闭缴费">
+                        </el-switch>
+                    </FormItem>
+                </Form>
+                <span slot="footer" class="dialog-footer">
+                    <Button @click="studentModel = false">取 消</Button>
+                    <Button type="primary" @click="updateJf()">保存修改</Button>
+                </span>
+            </el-dialog>
+
+            <el-dialog title="提现" :visible.sync="sModel" width="400px" >
+                <Form  label-position="top">
+                    <FormItem label="选择银行卡" >
+                        <Select v-model="tempCard.bankId" >
+                          <Option v-for="(item,index) in bankList" :key="index" :value="item.sunwouId" :label="item.bankName">
+                              <span>{{item.bankName}}</span>
+                              <span>{{item.name}}</span>
+                              <span>{{item.code}}</span>
+                              <span style="float:right;">{{item.number}}</span>
+                          </Option>
+                      </Select>
+                    </FormItem>
+                    <FormItem label="密码">
+                        <Input placeholder="密码" type="password" v-model="tempCard.passWord" />
+                    </FormItem>
+                </Form>
+                <span slot="footer" class="dialog-footer">
+                    <Button @click="sModel = false,tempCard.passWord = ''">取 消</Button>
+                    <Button type="primary" @click="chargeMoney()">确认提现</Button>
+                </span>
+            </el-dialog>
         </div>
     </transition>
 </template>
@@ -61,8 +101,28 @@ export default {
   },
   data() {
     return {
-      search1: "",search2: "",search3: "",search4: "",
+      sModel: false,
+      selection: [],
+      tempValue: {
+        goodsId: "",
+        describe: "",
+        jzTime: "",
+        start: ""
+      },
+      tempIndex: 0,
+      studentModel: false,
+      search1: "",
+      search2: "",
+      search3: "",
+      search4: "",
       total: 0,
+      bankList: [],
+      tempCard: {
+        bankId: "",
+        tokenId: sessionStorage.getItem("token"),
+        userName: JSON.parse(sessionStorage.getItem("user")).userName,
+        passWord: ""
+      },
       carouselModel: false,
       pageSizeList: [
         { label: "每页 10 条", value: 10 },
@@ -98,14 +158,14 @@ export default {
           }
         },
         { title: "缴费金额", key: "amount" },
-        { title: "应缴费用统计", key: "totalAmount" },
-        { title: "应缴人数统计", key: "totalNumber" },
+        { title: "应缴费用", key: "totalAmount" },
+        { title: "应缴人数", key: "totalNumber" },
         {
           title: "状态",
           key: "start",
           render: (h, params) => {
             var sl = "warning";
-            if (params.row.need) {
+            if (params.row.start) {
               sl = "success";
             }
             return h(
@@ -131,10 +191,21 @@ export default {
               h(
                 "Button",
                 {
-                  props: { type: "ghost", icon: "ios-compose-outline" },
+                  props: {
+                    type: "ghost",
+                    icon: "ios-compose-outline",
+                    size: "small"
+                  },
                   on: {
                     click: () => {
-                      console.log(params);
+                      that.studentModel = true;
+                      that.tempIndex = params.index;
+                      that.tempValue = {
+                        goodsId: params.row.sunwouId,
+                        describe: params.row.describe,
+                        jzTime: params.row.jzTime,
+                        start: params.row.start
+                      };
                     }
                   }
                 },
@@ -143,7 +214,7 @@ export default {
               h(
                 "Button",
                 {
-                  props: { type: "ghost", icon: "reply" },
+                  props: { type: "ghost", size: "small" },
                   on: {
                     click: () => {
                       that.$router.push({
@@ -153,7 +224,20 @@ export default {
                     }
                   }
                 },
-                "查"
+                "查看"
+              ),
+              h(
+                "Button",
+                {
+                  props: { type: "ghost", size: "small" },
+                  on: {
+                    click: () => {
+                      that.sModel = true;
+                      that.getBank();
+                    }
+                  }
+                },
+                "提现"
               )
             ]);
           }
@@ -164,7 +248,9 @@ export default {
         fields: [],
         wheres: [
           {
-            value: JSON.parse(sessionStorage.getItem('user')).appid ? 'appid':'parentId',
+            value: JSON.parse(sessionStorage.getItem("user")).appid
+              ? "appid"
+              : "parentId",
             opertionType: "equal",
             opertionValue: JSON.parse(sessionStorage.getItem("user")).sunwouId
           },
@@ -183,12 +269,178 @@ export default {
     that.getList();
   },
   methods: {
+    chargeMoney() {
+      if (this.tempCard.bankId == "") {
+        this.$Message.error("请选择一张银行卡");
+      } else if (this.tempCard.passWord == "") {
+        this.$Message.error("密码不能为空");
+      } else {
+        $.ajax({
+          url: sessionStorage.getItem("API") + "goods/tx",
+          data: this.tempCard,
+          dataType: "json",
+          method: "post",
+          success(res) {
+            that.tempCard.passWord = ""
+            that.sModel = false;
+            if (res.code) {
+              that.$Notice.success({
+                title: "提现成功"
+              });
+              that.getList();
+            } else {
+              that.$Notice.error({
+                title: "提现失败"
+              });
+            }
+          }
+        });
+      }
+    },
+    getBank() {
+      $.ajax({
+        url: sessionStorage.getItem("API") + "bank/find",
+        data: {
+          query: JSON.stringify({
+            fields: [],
+            wheres: [
+              {
+                value: "parentid",
+                opertionType: "equal",
+                opertionValue: JSON.parse(sessionStorage.getItem("user"))
+                  .sunwouId
+              }
+            ],
+            sorts: [{ value: "createTime", asc: false }],
+            pages: {
+              currentPage: 1,
+              size: 10000
+            }
+          })
+        },
+        method: "post",
+        dataType: "json",
+        success(res) {
+          that.tableLoading = false;
+          if (res.code) {
+            that.bankList = res.params.msg;
+          }
+        }
+      });
+    },
+    outputData() {
+      this.$refs.selection.exportCsv({
+        filename:
+          "jf-" +
+          new Date().getFullYear() +
+          (new Date().getMonth() + 1) +
+          new Date().getDate(),
+        columns: this.columns,
+        data: this.data
+      });
+    },
+    getSelected(e) {
+      var li = [];
+      for (var i in e) {
+        li.push(e[i].sunwouId);
+      }
+      that.selection = li;
+    },
+    deleteJf() {
+      if (this.selection.length == 0) {
+        this.$Notice.warning({
+          title: "请选择删除项"
+        });
+      } else {
+        that.$Modal.confirm({
+          title: "警告",
+          content: "<p>此操作将永久删除改信息，是否继续？</p>",
+          onOk() {
+            $.ajax({
+              url: sessionStorage.getItem("API") + "goods/update",
+              data: {
+                goodsId: that.selection.toString(),
+                isDelete: true
+              },
+              dataType: "json",
+              method: "post",
+              success(res) {
+                that.studentModel = false;
+                if (res.code) {
+                  that.$Notice.success({
+                    title: res.msg
+                  });
+                  that.getList();
+                } else {
+                  that.$Notice.error({
+                    title: res.msg
+                  });
+                }
+              }
+            });
+          },
+          onCancel() {
+            that.$Message.info("已取消");
+          }
+        });
+      }
+    },
+    updateJf() {
+      Date.prototype.Format = function(fmt) {
+        //author: meizz
+        var o = {
+          "M+": this.getMonth() + 1, //月份
+          "d+": this.getDate(), //日
+          "h+": this.getHours(), //小时
+          "m+": this.getMinutes(), //分
+          "s+": this.getSeconds(), //秒
+          "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+          S: this.getMilliseconds() //毫秒
+        };
+        if (/(y+)/.test(fmt))
+          fmt = fmt.replace(
+            RegExp.$1,
+            (this.getFullYear() + "").substr(4 - RegExp.$1.length)
+          );
+        for (var k in o)
+          if (new RegExp("(" + k + ")").test(fmt))
+            fmt = fmt.replace(
+              RegExp.$1,
+              RegExp.$1.length == 1
+                ? o[k]
+                : ("00" + o[k]).substr(("" + o[k]).length)
+            );
+        return fmt;
+      };
+      this.tempValue.jzTime = new Date(this.tempValue.jzTime).Format(
+        "yyyy-MM-dd"
+      );
+      $.ajax({
+        url: sessionStorage.getItem("API") + "goods/update",
+        data: this.tempValue,
+        dataType: "json",
+        method: "post",
+        success(res) {
+          that.studentModel = false;
+          if (res.code) {
+            that.$Notice.success({
+              title: "修改成功"
+            });
+            that.getList();
+          } else {
+            that.$Notice.error({
+              title: "修改失败"
+            });
+          }
+        }
+      });
+    },
     changePageSize() {
       this.getList();
     },
     clearFilter() {
       var li = ["describe", "jzTime", "need", "start"];
-      for (var i = 0; i < 5; i++) {
+      for (var i = 0; i < 4; i++) {
         this["search" + parseInt(i + 1)] = "";
         this.search(li[i], parseInt(i + 1));
       }
@@ -205,15 +457,23 @@ export default {
           temp = i;
         }
       }
-
       if (temp == -1) {
-        this.query.wheres.push({
-          value: tag,
-          opertionType: "like",
-          opertionValue: this["search" + num]
-        });
+        if (this["search" + num] != "") {
+          this.query.wheres.push({
+            value: tag,
+            opertionType:
+              this["search" + num] == "false" || this["search" + num] == "true"
+                ? "equal"
+                : "like",
+            opertionValue: this["search" + num]
+          });
+        }
       } else {
-        this.query.wheres[temp].opertionValue = this["search" + num];
+        if (this["search" + num] == "") {
+          this.query.wheres.splice(temp);
+        } else {
+          this.query.wheres[temp].opertionValue = this["search" + num];
+        }
       }
     },
     getList() {

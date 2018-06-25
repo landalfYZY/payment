@@ -4,7 +4,7 @@
             <div class="panel-between">
                 <div class="panel-start item-center">
                     <ButtonGroup>
-                        <Button type="ghost" ><Icon type="trash-a"></Icon> 删除</Button>
+                        <!-- <Button type="ghost" ><Icon type="trash-a"></Icon> 删除</Button> -->
                     </ButtonGroup>
                     <span class="font-grey" style="margin-left:10px">可以按回车进行筛选</span>
                 </div>
@@ -45,7 +45,7 @@ export default {
   },
   data() {
     return {
-      search1:'',
+      search1: "",
       tableLoading: false,
       total: 0,
       carouselModel: false,
@@ -74,15 +74,60 @@ export default {
               h(
                 "Button",
                 {
-                  props: { type: "ghost", icon: "ios-compose-outline" },
+                  props: {
+                    type: "ghost",
+                    icon: "ios-compose-outline",
+                    size: "small"
+                  },
                   on: {
                     click: () => {
-                      console.log(params);
+                      that.$router.push({
+                        path: "/bankCardUpdate",
+                        query: { card: params.row }
+                      });
                     }
                   }
                 },
                 "编辑"
-              )
+              ),
+              h("Button", {
+                props: { type: "ghost", icon: "trash-a", size: "small" },
+                on: {
+                  click: () => {
+                    that.$Modal.confirm({
+                      title: "警告",
+                      content: "<p>此操作将永久删除改信息，是否继续？</p>",
+                      onOk() {
+                        $.ajax({
+                          url: sessionStorage.getItem("API") + "bank/update",
+                          data: {
+                            sunwouId: params.row.sunwouId,
+                            isDelete: true
+                          },
+                          dataType: "json",
+                          method: "post",
+                          success(res) {
+                            
+                            if (res.code) {
+                              that.$Notice.success({
+                                title: res.msg.replace("修改", "删除")
+                              });
+                              that.getList();
+                            } else {
+                              that.$Notice.error({
+                                title: res.msg
+                              });
+                            }
+                          }
+                        });
+                      },
+                      onCancel() {
+                        that.$Message.info("已取消");
+                      }
+                    });
+                  }
+                }
+              })
             ]);
           }
         }
@@ -92,9 +137,13 @@ export default {
         fields: [],
         wheres: [
           {
-            value: JSON.parse(sessionStorage.getItem("user")).appid ? "appid":"parentid",
+            value: JSON.parse(sessionStorage.getItem("user")).appid
+              ? "appid"
+              : "parentid",
             opertionType: "equal",
             opertionValue: JSON.parse(sessionStorage.getItem("user")).sunwouId
+          },{
+            value:'isDelete',opertionType:"equal",opertionValue:false
           }
         ],
         sorts: [{ value: "createTime", asc: false }],

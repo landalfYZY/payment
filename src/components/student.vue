@@ -4,9 +4,10 @@
             <div class="panel-between">
                 <div class="panel-start item-center">
                     <ButtonGroup>
-                        <Button type="ghost" ><Icon type="trash-a"></Icon> 删除</Button>
+                        <Button type="ghost" @click="deletestu()"><Icon type="trash-a"></Icon> 删除</Button>
                         <Button type="ghost" @click="navTo('/studentAdd')"><Icon type="android-add"></Icon> 添加学生</Button>
-                        <Button type="ghost" @click="studentModel = true,getSchool()"><Icon type="android-add"></Icon> 导入学生</Button>
+                        <Button type="ghost" @click="outputData()"><Icon type="ios-upload-outline"></Icon> 导出数据</Button>
+                        <Button type="ghost" @click="studentModel = true"><Icon type="android-add"></Icon> 导入学生</Button>
                     </ButtonGroup>
                     <span class="font-grey" style="margin-left:10px">可以按回车进行筛选</span>
                 </div>
@@ -18,19 +19,24 @@
             </div>
             <div style="margin-top:15px" >
                 <Row :gutter="5">
-                    <Col :span="4">
+                    <Col :span="3">
+                        <Select v-model="search6" placeholder="学校筛选"  @on-change="search('schoolId',6),changePageSize()" @keydown.enter.native="changePageSize()">
+                            <Option v-for="(item,index) in schoolList" :value="item.sunwouId" :key="index">{{ item.name }}</Option>
+                        </Select>
+                    </Col>
+                    <Col :span="3">
                         <Input v-model="search1" placeholder="姓名 查找" @input="search('name',1)"  @keydown.enter.native="changePageSize()" />
                     </Col>
-                    <Col :span="4">
+                    <Col :span="3">
                         <Input v-model="search2" placeholder="身份证 查找" @input="search('sunwouId',2)" @keydown.enter.native="changePageSize()" />
                     </Col>
-                    <Col :span="4">
+                    <Col :span="3">
                         <Input v-model="search3" placeholder="性别 查找" @input="search('gender',3)" @keydown.enter.native="changePageSize()" />
                     </Col>
-                    <Col :span="4">
+                    <Col :span="3">
                         <Input v-model="search4" placeholder="入学年份 查找" @input="search('schoolTime',4)" @keydown.enter.native="changePageSize()" />
                     </Col>
-                    <Col :span="4">
+                    <Col :span="3">
                         <Input v-model="search5" placeholder="班级 查找"  @input="search('cl',5)" @keydown.enter.native="changePageSize()" /> 
                     </Col>
                     <Col :span="4">
@@ -41,7 +47,7 @@
                     </Col>
                 </Row>
             </div>
-            <Table border :columns="columns" :data="data" style="margin-top:15px" :loading="tableLoading"></Table>
+            <Table ref="selection" border :columns="columns" :data="data" style="margin-top:15px" @on-selection-change="getSelected" :loading="tableLoading"></Table>
             <div class="panel-end" style="margin-top:15px">
                 <Page :total="total" size="small" show-total show-elevator :page-size="query.pages.size" @on-change="changePage"></Page>
             </div>
@@ -65,6 +71,24 @@
                     <Button type="primary" @click="importFiles()">确 定</Button>
                 </span>
             </el-dialog>
+
+            <el-dialog :title="'修改学生信息 :'+tempValue.sunwouId" :visible.sync="stuModel" width="400px" >
+                <Form  label-position="top">
+                    <FormItem label="姓名">
+                        <Input placeholder="姓名" v-model="tempValue.name" />
+                    </FormItem>
+                    <FormItem label="入学年份" >
+                        <Input placeholder="入学年份" v-model="tempValue.schoolTime" />
+                    </FormItem>
+                    <FormItem label="班级" >
+                        <Input placeholder="班级"  v-model="tempValue.cl" />
+                    </FormItem>
+                </Form>
+                <span slot="footer" class="dialog-footer">
+                    <Button @click="stuModel = false">取 消</Button>
+                    <Button type="primary" @click="updateStudent()">保存修改</Button>
+                </span>
+            </el-dialog>
         </div>
     </transition>
 </template>
@@ -78,6 +102,14 @@ export default {
   },
   data() {
     return {
+      tempValue:{
+        ids:'',
+        schoolTime:'',
+        name:'',
+        cl:''
+      },
+      stuModel:false,
+      selection:[],
       user: JSON.parse(sessionStorage.getItem("user")),
       tableLoading:false,
       api: sessionStorage.getItem("API"),
@@ -94,7 +126,7 @@ export default {
         { label: "每页 50 条", value: 50 },
         { label: "每页 100 条", value: 100 }
       ],
-      search1: "",search2: "",search3: "",search4: "",search5: "",
+      search1: "",search2: "",search3: "",search4: "",search5: "",search6:'',
       classList: [],
       columns: [
         { type: "selection", width: 60, align: "center" },
@@ -117,20 +149,19 @@ export default {
                   props: { type: "ghost", icon: "ios-compose-outline" },
                   on: {
                     click: () => {
-                      console.log(params);
+                      that.stuModel = true
+                      that.tempValue = {
+                        ids:params.row.sunwouId,
+                        name:params.row.name,
+                        schoolTime:params.row.schoolTime,
+                        cl:params.row.cl
+                      }
                     }
                   }
                 },
                 "编辑"
               ),
-              h("Button", {
-                props: { type: "ghost", icon: "ios-trash-outline" },
-                on: {
-                  click: () => {
-                    console.log(params);
-                  }
-                }
-              })
+              
             ]);
           }
         }
@@ -153,15 +184,99 @@ export default {
   mounted() {
     that = this;
     that.getList();
+    that.getSchool();
   },
   methods: {
-    
+    updateStudent(){
+
+      $.ajax({
+        url: sessionStorage.getItem("API") + "user/update",
+        data: this.tempValue,
+        dataType: "json",
+        method: "post",
+        success(res) {
+          that.stuModel = false;
+          if (res.code) {
+            that.$Notice.success({
+              title: "修改成功"
+            });
+            that.getList();
+          } else {
+            that.$Notice.error({
+              title: "修改失败"
+            });
+          }
+        }
+      });
+    },
+    getSelected(e) {
+      var li = [];
+      for (var i in e) {
+        li.push(e[i].sunwouId);
+      }
+      that.selection = li;
+    },
+    deletestu(){
+      if (this.selection.length == 0) {
+        this.$Notice.warning({
+          title: "请选择删除项"
+        });
+      } else {
+        that.$Modal.confirm({
+          title: "警告",
+          content: "<p>此操作将永久删除改信息，是否继续？</p>",
+          onOk() {
+            $.ajax({
+              url: sessionStorage.getItem("API") + "user/update",
+              data: {
+                ids: that.selection.toString(),
+                isDelete: true
+              },
+              dataType: "json",
+              method: "post",
+              success(res) {
+                that.studentModel = false;
+                if (res.code) {
+                  that.$Notice.success({
+                    title: res.msg.replace('更新','删除')
+                  });
+                  that.getList();
+                } else {
+                  that.$Notice.error({
+                    title: res.msg
+                  });
+                }
+              }
+            });
+          },
+          onCancel() {
+            that.$Message.info("已取消");
+          }
+        });
+      }
+    },
+    outputData() {
+      if(this.data.length == 0){
+        this.$Message.warning("无数据可导出");
+      }else{
+        this.$refs.selection.exportCsv({
+          filename:
+            "student-" +
+            new Date().getFullYear() +
+            (new Date().getMonth() + 1) +
+            new Date().getDate(),
+          columns: this.columns,
+          data: this.data
+        });
+      }
+      
+    },
     handleClose() {
       this.studentModel = false;
     },
     clearFilter(){
-      var li = ['name','sunwouId','gender','schoolTime','cl']
-      for(var i=0;i<5;i++){
+      var li = ['name','sunwouId','gender','schoolTime','cl','schoolId']
+      for(var i=0;i<6;i++){
           this['search'+parseInt(i+1)] = '';
           this.search(li[i],parseInt(i+1))
       }
@@ -236,11 +351,10 @@ export default {
           temp = i;
         }
       }
-
       if (temp == -1) {
         this.query.wheres.push({
           value: tag,
-          opertionType: "like",
+          opertionType: typeof this['search'+num] == 'boolean' ? "equal":'like',
           opertionValue: this['search'+num]
         });
       } else {

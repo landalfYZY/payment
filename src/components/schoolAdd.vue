@@ -28,7 +28,7 @@ export default {
   data() {
     return {
       formValidate: {
-        appId:JSON.parse(sessionStorage.getItem('user')).sunwouId,
+        appid:JSON.parse(sessionStorage.getItem('user')).appid ? JSON.parse(sessionStorage.getItem("user")).sunwouId:JSON.parse(sessionStorage.getItem("user")).appId,
         name: "",
         userName:'',
         passWord:'',

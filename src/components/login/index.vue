@@ -80,6 +80,7 @@ export default {
           that.registLoading = false
           if (res.code) {
             sessionStorage.setItem("user", JSON.stringify(res.params.msg));
+            sessionStorage.setItem("token", res.params.token);
             that.$router.push({ path: "/" });
 
             localStorage.setItem('remember',that.remember)

@@ -19,6 +19,7 @@ import bankCard from '../components/bankCard'
 import payList from '../components/payList'
 import orderlist from '../components/orderlist'
 import bankCardAdd from '../components/bankCardAdd'
+import bankCardUpdate from '../components/bankCardUpdate'
 
 Vue.use(Router)
 
@@ -42,6 +43,7 @@ export default new Router({
       { path: '/payList', name: '缴费项列表', component: payList },
       { path: '/orderlist', name: '订单列表', component: orderlist },
       { path: '/bankCardAdd', name: '添加银行卡', component: bankCardAdd },
+      { path: '/bankCardUpdate', name: '更新银行卡', component: bankCardUpdate },
     ]}
   ]
 })
