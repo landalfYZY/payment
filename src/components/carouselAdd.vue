@@ -1,7 +1,7 @@
 <template>
     <transition name="el-fade-in-linear">
         <div>
-            <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
+            <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120" style="width:800px">
                 <FormItem label="标题" prop="name">
                     <Input v-model="formValidate.name" placeholder="标题" />
                 </FormItem>
@@ -16,34 +16,17 @@
                         </div>
                     </Upload>
                 </FormItem>
-                <FormItem label="Date">
-                    <Row>
-                        <Col span="11">
-                            <FormItem prop="date">
-                                <DatePicker type="date" placeholder="Select date" v-model="formValidate.date"></DatePicker>
-                            </FormItem>
-                        </Col>
-                        <Col span="2" style="text-align: center">-</Col>
-                        <Col span="11">
-                            <FormItem prop="time">
-                                <TimePicker type="time" placeholder="Select time" v-model="formValidate.time"></TimePicker>
-                            </FormItem>
-                        </Col>
-                    </Row>
+                <FormItem label="到期时间" prop="date">
+                    <DatePicker type="date" placeholder="Select date" v-model="formValidate.date"></DatePicker>
                 </FormItem>
-                <FormItem label="Gender" prop="gender">
-                    <RadioGroup v-model="formValidate.gender">
-                        <Radio label="male">Male</Radio>
-                        <Radio label="female">Female</Radio>
-                    </RadioGroup>
+                <FormItem label="广告提供商" prop="gender">
+                    <Input v-model="formValidate.mail" placeholder="广告提供商" />
                 </FormItem>
-                <FormItem label="Hobby" prop="interest">
-                    <CheckboxGroup v-model="formValidate.interest">
-                        <Checkbox label="Eat"></Checkbox>
-                        <Checkbox label="Sleep"></Checkbox>
-                        <Checkbox label="Run"></Checkbox>
-                        <Checkbox label="Movie"></Checkbox>
-                    </CheckboxGroup>
+                <FormItem label="联系人" prop="interest">
+                    <Input v-model="formValidate.mail" placeholder="联系人" />
+                </FormItem>
+                <FormItem label="联系电话" prop="interest">
+                    <Input v-model="formValidate.mail" placeholder="联系电话" />
                 </FormItem>
                 <FormItem label="Desc" prop="desc">
                     <Input v-model="formValidate.desc" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="Enter something..."></Input>
@@ -86,60 +69,7 @@ export default {
           },
           { type: "email", message: "Incorrect email format", trigger: "blur" }
         ],
-        city: [
-          {
-            required: true,
-            message: "Please select the city",
-            trigger: "change"
-          }
-        ],
-        gender: [
-          { required: true, message: "Please select gender", trigger: "change" }
-        ],
-        interest: [
-          {
-            required: true,
-            type: "array",
-            min: 1,
-            message: "Choose at least one hobby",
-            trigger: "change"
-          },
-          {
-            type: "array",
-            max: 2,
-            message: "Choose two hobbies at best",
-            trigger: "change"
-          }
-        ],
-        date: [
-          {
-            required: true,
-            type: "date",
-            message: "Please select the date",
-            trigger: "change"
-          }
-        ],
-        time: [
-          {
-            required: true,
-            type: "string",
-            message: "Please select time",
-            trigger: "change"
-          }
-        ],
-        desc: [
-          {
-            required: true,
-            message: "Please enter a personal introduction",
-            trigger: "blur"
-          },
-          {
-            type: "string",
-            min: 20,
-            message: "Introduce no less than 20 words",
-            trigger: "blur"
-          }
-        ]
+        
       }
     };
   },

@@ -6,12 +6,12 @@
                     <div class="showDa">
                         <Row :gutter="16">
                             <Col :span="8">
-                                <div class="crig bg-primary panel-center item-center"><Icon type="eye" size="30" color="#fff"></Icon></div>
+                                <div class="crig bg-primary panel-center item-center"><Icon type="ios-box" size="30" color="#fff"></Icon></div>
                             </Col>
                             <Col :span="16">
                                 <div>
-                                    <div class="font-grey" style="font-size:30px">523</div>
-                                    <div class="" >今日访问量</div>
+                                    <div class="font-grey" style="font-size:30px">{{orderNum}}</div>
+                                    <div class="" >订单数</div>
                                 </div>
                             </Col>
                         </Row>
@@ -25,7 +25,7 @@
                             </Col>
                             <Col :span="16">
                                 <div>
-                                    <div class="font-grey" style="font-size:30px">523</div>
+                                    <div class="font-grey" style="font-size:30px">{{wxuserNum}}</div>
                                     <div class="" >用户数量</div>
                                 </div>
                             </Col>
@@ -73,34 +73,37 @@ var that;
 export default {
   data() {
     return {
-        studentNum:0
+        studentNum:0,
+        wxuserNum:0,
+        orderNum:0
     };
   },
   mounted() {
     that = this;
+    this.getSData('wxuser','appid',JSON.parse(sessionStorage.getItem("user")).appid ?SON.parse(sessionStorage.getItem("user")) .sunwouId:JSON.parse(sessionStorage.getItem("user")).appId ,'wxuserNum');
+    this.getSData('user',JSON.parse(sessionStorage.getItem("user")).appid ? "appid"
+                  : "schoolId",JSON.parse(sessionStorage.getItem("user")) .sunwouId,'studentNum');
+    this.getSData('order',JSON.parse(sessionStorage.getItem("user")).appid ? "appid":"schoolId",JSON.parse(sessionStorage.getItem("user")) .sunwouId,'orderNum');
   },
   methods: {
-    getStudentNum() {
+    getSData(url,val,value,name) {
       $.ajax({
-        url: sessionStorage.getItem(API) + "user/find",
+        url: sessionStorage.getItem('API') + url+"/find",
         data: {
           query: JSON.stringify({
             fields: [],
             wheres: [
               {
-                value: JSON.parse(sessionStorage.getItem("user")).appid
-                  ? "appid"
-                  : "schoolId",
+                value: val,
                 opertionType: "equal",
-                opertionValue: JSON.parse(sessionStorage.getItem("user"))
-                  .sunwouId
+                opertionValue: value
               },
               { value: "isDelete", opertionType: "equal", opertionValue: false }
             ],
             sorts: [{ value: "createTime", asc: false }],
             pages: {
               currentPage: 1,
-              size: 0
+              size: 1
             }
           })
         },
@@ -108,11 +111,12 @@ export default {
         method:'post',
         success(res){
             if(res.code){
-                that.studentNum = res.params.total
+                that[name] = res.params.total
             }
         }
       });
-    }
+    },
+    
   }
 };
 </script>

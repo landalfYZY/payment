@@ -41,7 +41,7 @@
                     </Col>
                 </Row>
             </div>
-            <Table border ref="selection"  :columns="columns" :data="data" style="margin-top:15px" @on-selection-change="getSelected"></Table>
+            <Table border ref="selection"  :columns="columns" :data="data" style="margin-top:15px" @on-selection-change="getSelected" :loading="tableLoading"></Table>
             <div class="panel-end" style="margin-top:15px">
                 <Page :total="total" size="small" show-total show-elevator :page-size="query.pages.size" :on-change="changePage"></Page>
             </div>
@@ -102,6 +102,7 @@ export default {
   data() {
     return {
       sModel: false,
+      tableLoading:false,
       selection: [],
       tempValue: {
         goodsId: "",
@@ -159,7 +160,12 @@ export default {
         },
         { title: "缴费金额", key: "amount" },
         { title: "应缴费用", key: "totalAmount" },
-        { title: "应缴人数", key: "totalNumber" },
+        { title: "应/选缴人数", key: "totalNumber" },
+        { title: "不缴人数", key: "noNeed" },
+        { title: "已缴人数", key: "realNumber" },
+        { title: "已缴费", render:(h,params)=>{
+          return h("span",params.row.realNumber*params.row.amount)
+        } },
         {
           title: "状态",
           key: "start",
@@ -180,7 +186,7 @@ export default {
             );
           }
         },
-        { title: "创建时间", key: "createTime" },
+        { title: "创建日期", key: "createDate" },
         {
           title: "操作",
           key: "action",
@@ -477,12 +483,14 @@ export default {
       }
     },
     getList() {
+      this.tableLoading = true
       $.ajax({
         url: sessionStorage.getItem("API") + "goods/find",
         data: { query: JSON.stringify(this.query) },
         method: "post",
         dataType: "json",
         success(res) {
+          that.tableLoading = false
           if (res.code) {
             that.data = res.params.msg;
             that.total = res.params.total;

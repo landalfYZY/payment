@@ -29,7 +29,7 @@
                                 <Dropdown trigger="click"  style="margin-left:50px">
                                     <a href="javascript:void(0)" style="display:block">
                                         <div class="panel-start item-center">
-                                            <img src="../../assets/logo/logo.png" width="25px" alt="">
+                                            <Avatar icon="person" size="small" />
                                             <div class="font-white" style="margin-left:10px">{{user.userName}}</div>
                                             <Icon class="font-white" style="margin-left:10px" type="arrow-down-b"></Icon>
                                         </div>

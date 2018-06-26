@@ -6,7 +6,7 @@
                     <Input v-model="formValidate.describe" style="width: 250px" placeholder="缴费项标题" />
                 </FormItem>
                 <FormItem label="缴费金额" prop="amount">
-                    <Input v-model="formValidate.amount" style="width: 250px" placeholder="缴费金额" />
+                  <Input v-model="formValidate.amount" style="width: 250px" placeholder="缴费金额" />
                 </FormItem>
                 <FormItem label="是否是必缴费用" prop="need">
                         <el-switch v-model="formValidate.need" active-text="是" inactive-text="否"> </el-switch>
@@ -25,7 +25,7 @@
                         </el-dialog>
                 </FormItem>
                 <FormItem>
-                    <Button type="primary" @click="handleSubmit('formValidate')">保存提交</Button>
+                    <Button type="primary" :loading="loading" @click="handleSubmit('formValidate')">保存提交</Button>
                     <Button type="ghost" @click="handleReset('formValidate')" style="margin-left: 8px">重置</Button>
                 </FormItem>
             </Form>
@@ -42,6 +42,7 @@ export default {
   data() {
     return {
       dialogVisible: false,
+      loading:false,
       formValidate: {
         appid: JSON.parse(sessionStorage.getItem('user')).appid ? JSON.parse(sessionStorage.getItem("user")).sunwouId:JSON.parse(sessionStorage.getItem("user")).appId,
         describe: "",
@@ -73,6 +74,7 @@ export default {
       this.formValidate.query = sessionStorage.getItem("tempPay");
     },
     handleSubmit(name) {
+      this.loading = true
       Date.prototype.Format = function(fmt) {
         //author: meizz
         var o = {
@@ -109,6 +111,7 @@ export default {
               dataType: "json",
               method: "post",
               success(res) {
+                that.loading = false
                 if (res.code) {
                   that.$Notice.success({
                     title: "缴费项添加成功",
@@ -121,9 +124,11 @@ export default {
               }
             });
           } else {
+            that.loading = false
             this.$Message.error("密码不一致!");
           }
         } else {
+          that.loading = false
           this.$Message.error("Fail!");
         }
       });

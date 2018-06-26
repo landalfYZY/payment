@@ -93,6 +93,9 @@ export default {
       columns: [
         { type: "selection", width: 60, align: "center" },
         { title: "单号", key: "sunwouId" },
+        { title: "缴费项", render: (h, params) => {
+            return h("span", params.row.goods.describe);
+          } },
         {
           title: "学生姓名",
           key: "user.name",
@@ -151,7 +154,6 @@ export default {
       query: {
         fields: [],
         wheres: [
-          { value: "goodsId", opertionType: "equal", opertionValue: "" },
           {
             value: JSON.parse(sessionStorage.getItem("user")).appid ? "appid":"schoolId",
             opertionType: "equal",
@@ -168,7 +170,6 @@ export default {
   },
   mounted() {
     that = this;
-    this.query.wheres[0].opertionValue = this.$route.query.id;
     that.getList();
   },
   methods: {

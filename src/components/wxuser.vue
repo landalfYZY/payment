@@ -140,7 +140,7 @@ export default {
             return h("span", gender);
           }
         },
-        { title: "昵称", key: "nickName" },
+        { title: "微信昵称", key: "nickName" },
         { title: "省份", key: "province" },
         { title: "城市", key: "city" },
         { title: "注册时间", key: "createTime" }
@@ -150,7 +150,7 @@ export default {
         fields: [],
         wheres: [
           {
-            value: "appId",
+            value: "appid",
             opertionType: "equal",
             opertionValue: JSON.parse(sessionStorage.getItem("user")).sunwouId
           },

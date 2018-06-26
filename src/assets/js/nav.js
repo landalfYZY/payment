@@ -22,6 +22,11 @@ var nav = {
             {label:'银行卡列表',path:'/bankCard'},
             {label:'添加银行卡',path:'/bankCardAdd'}
         ]},
+        {icon:'record',label:'款项记录',children:[
+            {label:'订单记录',path:'/orderRecord'},
+            {label:'退款记录',path:'/bankCardAdd'},
+            {label:'提现记录',path:'/bankCardAdd'}
+        ]},
         // {icon:'ios-paper',label:'日志',children:[
         //     {label:'操作日志',path:'#'},
         //     {label:'系统日志',path:'#'},

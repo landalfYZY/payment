@@ -19,7 +19,7 @@
             </div>
             <Table border :columns="columns" :data="data" style="margin-top:15px" :loading="tableLoading"></Table>
             <div class="panel-end" style="margin-top:15px">
-                <Page :total="total" size="small" show-total show-elevator :page-size="query.pages.size" :on-change="changePage"></Page>
+                <Page :total="total" size="small" show-total show-elevator :page-size="query.pages.size" @on-change="changePage"></Page>
             </div>
             <el-dialog title="修改信息" :visible.sync="studentModel" width="400px" >
                 <Form  label-position="top">
