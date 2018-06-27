@@ -5,7 +5,7 @@
                 <div class="panel-start">
                     <ButtonGroup>
                         <!-- <Button type="ghost" ><Icon type="trash-a"></Icon> 删除</Button> -->
-                        <Button type="ghost" @click="navTo('/carouselAdd')"><Icon type="android-add"></Icon> 添加广告</Button>
+                        <Button type="ghost" @click="navTo('/noticeAdd')"><Icon type="android-add"></Icon> 添加公告</Button>
                     </ButtonGroup>
                 </div>
                 <div class="panel-end">
@@ -69,18 +69,10 @@ export default {
       columns: [
         { type: "selection", width: 60, align: "center" },
         { title: "排序", key: "sort" },
-        {
-          title: "图片",
-          render: (h, params) => {
-            return h("Avatar", {
-              props: { src: params.row.pic }
-            });
-          }
-        },
+
         { title: "标题", key: "title" },
         { title: "联系人", key: "concat" },
         { title: "电话", key: "phone" },
-        { title: "广告商", key: "shopName" },
         { title: "到期时间", key: "jzTime" },
         { title: "创建时间", key: "createDate" },
         {
@@ -97,7 +89,7 @@ export default {
                   on: {
                     click: () => {
                       that.$router.push({
-                        path: "/carouselUpdate",
+                        path: "/noticeUpdate",
                         query: { msg: JSON.stringify(params.row) }
                       });
                     }
@@ -178,7 +170,7 @@ export default {
             opertionType: "equal",
             opertionValue: JSON.parse(sessionStorage.getItem("user")).sunwouId
           },
-          {value: "type", opertionType: "equal", opertionValue: "1"},
+          {value: "type", opertionType: "equal", opertionValue: "2"},
           { value: "isDelete", opertionType: "equal", opertionValue: false }
         ],
         sorts: [{ value: "sort", asc: true }],

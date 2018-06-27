@@ -215,7 +215,7 @@ export default {
       },
       formValidate: {
         appid:JSON.parse(sessionStorage.getItem('user')).sunwouId,
-        type:1,
+        type:2,
         pic: "",
         title: "",
         richText: "",
@@ -234,7 +234,7 @@ export default {
     };
   },
   mounted(){
-
+    this.formValidate = JSON.parse(this.$route.query.msg)
   },
   methods: {
     submitForm(){
@@ -267,13 +267,13 @@ export default {
       };
       this.formValidate.jzTime = new Date(this.formValidate.jzTime).Format("yyyy-MM-dd");
       $.ajax({
-        url:sessionStorage.getItem("API") + "ad/add",
+        url:sessionStorage.getItem("API") + "ad/update",
         data:this.formValidate,
         dataType:'json',
         method:'post',
         success(res){
           if(res.code){
-            that.$router.push({path:'/carousel'})
+            that.$router.push({path:'/notice'})
           }
         }
       })

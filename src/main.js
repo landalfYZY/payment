@@ -8,7 +8,12 @@ import iView from 'iview'
 import 'iview/dist/styles/iview.css';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+import vueQuillEditor from 'vue-quill-editor'
 
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+Vue.use(vueQuillEditor)
 
 Vue.config.productionTip = false
 Vue.use(iView)

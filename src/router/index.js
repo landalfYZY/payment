@@ -21,6 +21,11 @@ import orderlist from '../components/orderlist'
 import bankCardAdd from '../components/bankCardAdd'
 import bankCardUpdate from '../components/bankCardUpdate'
 import orderRecord from '../components/orderRecord'
+import carouselUpdate from '../components/carouselUpdate'
+import notice from '../components/notice'
+import noticeUpdate from '../components/noticeUpdate'
+import noticeAdd from '../components/noticeAdd'
+
 
 Vue.use(Router)
 
@@ -32,6 +37,7 @@ export default new Router({
       { path: '/overview', name: '概览', component: overview },
       { path: '/carousel', name: '广告', component: carousel },
       { path: '/carouselAdd', name: '新增广告', component: carouselAdd },
+      { path: '/carouselUpdate', name: '修改广告', component: carouselUpdate },
       { path: '/schoolAdd', name: '新增单位', component: schoolAdd },
       { path: '/school', name: '单位列表', component: school },
       { path: '/student', name: '学生列表', component: student },
@@ -46,6 +52,9 @@ export default new Router({
       { path: '/bankCardAdd', name: '添加银行卡', component: bankCardAdd },
       { path: '/bankCardUpdate', name: '更新银行卡', component: bankCardUpdate },
       { path: '/orderRecord', name: '订单记录', component: orderRecord },
+      { path: '/notice', name: '公告列表', component: notice },
+      { path: '/noticeAdd', name: '添加公告', component: noticeAdd },
+      { path: '/noticeUpdate', name: '修改公告', component: noticeUpdate },
     ]}
   ]
 })

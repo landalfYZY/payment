@@ -3,7 +3,7 @@ var nav = {
     items:[
         {icon:'speakerphone',label:'通知广告',zt:true,children:[
             {label:'广告列表',path:'/carousel'},
-            {label:'公告列表',path:'#'},
+            {label:'公告列表',path:'/notice'},
         ]},
         {icon:'network',label:'组织单位',zt:true,children:[
             {label:'所有单位',path:'/school'},

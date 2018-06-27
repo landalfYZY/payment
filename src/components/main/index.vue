@@ -20,12 +20,12 @@
                                 </div>
                             </div>
                             <div class="panel-end item-center">
-                                <Badge count="0">
+                                <!-- <Badge count="0">
                                     <Button type="ghost" icon="ios-chatboxes-outline" size="small" style="color:#fff;font-size:16px"></Button>
                                 </Badge>
                                 <Badge count="0" style="margin-left:20px">
                                     <Button type="ghost" icon="ios-bell-outline" size="small" style="color:#fff;font-size:16px"></Button>
-                                </Badge>
+                                </Badge> -->
                                 <Dropdown trigger="click"  style="margin-left:50px">
                                     <a href="javascript:void(0)" style="display:block">
                                         <div class="panel-start item-center">

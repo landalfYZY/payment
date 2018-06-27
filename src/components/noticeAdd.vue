@@ -27,14 +27,6 @@
                 <FormItem label="到期时间" >
                     <DatePicker v-model="formValidate.jzTime" type="date" style="width:300px" placeholder="到期时间" ></DatePicker>
                 </FormItem>
-                <FormItem label="图片" >
-                    <Upload :action="api+'file/fileup'" :data="{userId:user.sunwouId}" :on-success="fileSuccess">
-                        <Button type="ghost" icon="ios-cloud-upload-outline">点击上传</Button>
-                    </Upload>
-                </FormItem>
-                <FormItem label="广告提供商">
-                    <Input v-model="formValidate.shopName" placeholder="广告提供商" />
-                </FormItem>
                 
                 <FormItem label="富文本编辑" prop="desc">
                     <quill-editor style="height:300px" v-model="formValidate.richText"
@@ -215,14 +207,12 @@ export default {
       },
       formValidate: {
         appid:JSON.parse(sessionStorage.getItem('user')).sunwouId,
-        type:1,
-        pic: "",
+        type:2,
         title: "",
         richText: "",
         sort: 0,
         concat: "",
         jzTime: "",
-        shopName: "",
         phone: ""
       },
       ruleValidate: {
@@ -273,7 +263,7 @@ export default {
         method:'post',
         success(res){
           if(res.code){
-            that.$router.push({path:'/carousel'})
+            that.$router.push({path:'/notice'})
           }
         }
       })

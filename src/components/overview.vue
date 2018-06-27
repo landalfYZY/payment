@@ -80,7 +80,7 @@ export default {
   },
   mounted() {
     that = this;
-    this.getSData('wxuser','appid',JSON.parse(sessionStorage.getItem("user")).appid ?SON.parse(sessionStorage.getItem("user")) .sunwouId:JSON.parse(sessionStorage.getItem("user")).appId ,'wxuserNum');
+    this.getSData('wxuser','appid',JSON.parse(sessionStorage.getItem("user")).appid ? JSON.parse(sessionStorage.getItem("user")) .sunwouId:JSON.parse(sessionStorage.getItem("user")).appId ,'wxuserNum');
     this.getSData('user',JSON.parse(sessionStorage.getItem("user")).appid ? "appid"
                   : "schoolId",JSON.parse(sessionStorage.getItem("user")) .sunwouId,'studentNum');
     this.getSData('order',JSON.parse(sessionStorage.getItem("user")).appid ? "appid":"schoolId",JSON.parse(sessionStorage.getItem("user")) .sunwouId,'orderNum');
