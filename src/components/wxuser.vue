@@ -4,7 +4,7 @@
             <div class="panel-between">
                 <div class="panel-start item-center">
                     <ButtonGroup>
-                        <Button type="ghost" @click="navTo('/studentAdd')"><Icon type="android-add"></Icon> 发送短信</Button>
+                        <Button type="ghost" ><Icon type="android-add"></Icon> 发送短信</Button>
                         <Button type="ghost" @click="outputData()"><Icon type="ios-upload-outline"></Icon> 导出数据</Button>
                     </ButtonGroup>
                     <span class="font-grey" style="margin-left:10px">可以按回车进行筛选</span>
