@@ -149,6 +149,7 @@ export default {
       query: {
         fields: [],
         wheres: [
+          { value: "phone", opertionType: "like", opertionValue: "1" },
           {
             value: "appid",
             opertionType: "equal",
