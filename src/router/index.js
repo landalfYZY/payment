@@ -26,6 +26,9 @@ import notice from '../components/notice'
 import noticeUpdate from '../components/noticeUpdate'
 import noticeAdd from '../components/noticeAdd'
 
+import role from '../components/role'
+import power from '../components/power'
+import roleAdd from '../components/roleAdd'
 
 Vue.use(Router)
 
@@ -55,6 +58,9 @@ export default new Router({
       { path: '/notice', name: '公告列表', component: notice },
       { path: '/noticeAdd', name: '添加公告', component: noticeAdd },
       { path: '/noticeUpdate', name: '修改公告', component: noticeUpdate },
+      { path: '/role', name: '角色列表', component: role },
+      { path: '/power', name: '权限列表', component: power },
+      { path: '/roleAdd', name: '权限列表', component: roleAdd },
     ]}
   ]
 })

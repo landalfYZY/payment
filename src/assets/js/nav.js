@@ -33,10 +33,11 @@ var nav = {
         //     {label:'系统更新日志',path:'#'},
         //     {label:'异常分析',path:'#'}
         // ]},
-        // {icon:'ios-gear',label:'系统设置',children:[
-        //     {label:'个人操作设置',path:'#'},
-        //     {label:'系统基础设置',path:'#'}
-        // ]},
+        {icon:'ios-gear',label:'权限设置',zt:true,children:[
+            {label:'权限列表',path:'/power'},
+            {label:'角色列表',path:'/role'},
+            {label:'角色新增',path:'/roleAdd'}
+        ]},
     ]
 }
 
