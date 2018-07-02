@@ -20,6 +20,7 @@ Vue.use(iView)
 Vue.use(ElementUI);
 sessionStorage.setItem('API','https://www.sunwou.com/jf/')
 //sessionStorage.setItem('API','http://192.168.31.250/frame/')
+sessionStorage.setItem("time",0)
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

@@ -63,23 +63,39 @@
                     </div>
                 </Col>
             </Row>
+            <div style="line-height:50px" class="font-title-mini">快速导航</div>
+            <Row :gutter="16">
+                <Col :span="6" v-for="(item,index) in nav.items" :key="index" v-show="user.appid || !item.zt" style="margin-top:30px">
+                    <Card>
+                        <p slot="title">{{item.label}}</p>
+                        <router-link v-for="(item2,index2) in item.children" :key="index2" tag="li" :to="item2.path" >
+                            <a href="javascript:;">{{item2.label}}</a>
+                        </router-link>
+                    </Card>
+                </Col>
+                
+            </Row>
         </div>
     </transition>
 </template>
 <script>
 import G2 from "@antv/g2";
 import { View } from "@antv/data-set";
+var navUrl = require("../assets/js/nav.js");
 var that;
 export default {
   data() {
     return {
         studentNum:0,
         wxuserNum:0,
-        orderNum:0
+        orderNum:0,
+        nav:navUrl.nav,
+        user:""
     };
   },
   mounted() {
     that = this;
+    this.user = JSON.parse(sessionStorage.getItem("user"));
     this.getSData('wxuser','appid',JSON.parse(sessionStorage.getItem("user")).appid ? JSON.parse(sessionStorage.getItem("user")) .sunwouId:JSON.parse(sessionStorage.getItem("user")).appId ,'wxuserNum');
     this.getSData('user',JSON.parse(sessionStorage.getItem("user")).appid ? "appid"
                   : "schoolId",JSON.parse(sessionStorage.getItem("user")) .sunwouId,'studentNum');

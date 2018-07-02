@@ -78,14 +78,16 @@ export default {
         method: "post",
         success(res) {
           that.registLoading = false
+          
           if (res.code) {
+            localStorage.setItem('tempPwd',that.login.passWord)
             sessionStorage.setItem("user", JSON.stringify(res.params.msg));
             sessionStorage.setItem("token", res.params.token);
             that.$router.push({ path: "/" });
 
             localStorage.setItem('remember',that.remember)
             localStorage.setItem('autoLogin',that.autoLogin)
-
+            
             if(that.remember){
               localStorage.setItem('userName',that.login.userName)
               localStorage.setItem('passWord',that.login.passWord)

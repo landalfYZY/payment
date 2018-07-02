@@ -49,7 +49,7 @@
                 </Form>
                 <span slot="footer" class="dialog-footer">
                     <Button @click="sModel = false,tempValue.passWord = ''">取 消</Button>
-                    <Button type="primary" @click="backMoney()">确认退款</Button>
+                    <Button type="primary" @click="checkToken()">确认退款</Button>
                 </span>
             </el-dialog>
         </div>
@@ -65,16 +65,17 @@ export default {
   },
   data() {
     return {
-      selection:[],
-      sModel:false,
-      tempValue:{
-        orderId:'',
-        userName:JSON.parse(sessionStorage.getItem('user')).userName,
-        amount:0,
-        tokenId:sessionStorage.getItem('token'),
-        passWord:'',
+      selection: [],
+      sModel: false,
+      tempValue: {
+        orderId: "",
+        userName: JSON.parse(sessionStorage.getItem("user")).userName,
+        amount: 0,
+        tokenId: sessionStorage.getItem("token"),
+        passWord: ""
       },
-      search1:'',search2:'',
+      search1: "",
+      search2: "",
       tableLoading: false,
       total: 0,
       carouselModel: false,
@@ -115,9 +116,11 @@ export default {
           }
         },
         { title: "缴费金额", key: "amount" },
-        { title: "退款金额", key: "refund" ,
-          render: (h,params) => {
-            return h("span",params.row.refund ? params.row.refund:0)
+        {
+          title: "退款金额",
+          key: "refund",
+          render: (h, params) => {
+            return h("span", params.row.refund ? params.row.refund : 0);
           }
         },
         {
@@ -127,10 +130,10 @@ export default {
             var sl = "warning";
             if (params.row.status == "已付款") {
               sl = "success";
-            }else if(params.row.status == '已取消'){
-              sl = 'info'
-            }else if(params.row.status == '已退款'){
-              sl = 'danger'
+            } else if (params.row.status == "已取消") {
+              sl = "info";
+            } else if (params.row.status == "已退款") {
+              sl = "danger";
             }
             return h(
               "el-tag",
@@ -143,9 +146,7 @@ export default {
               params.row.status
             );
           }
-        },
-        
-        
+        }
       ],
       data: [],
       query: {
@@ -153,7 +154,9 @@ export default {
         wheres: [
           { value: "goodsId", opertionType: "equal", opertionValue: "" },
           {
-            value: JSON.parse(sessionStorage.getItem("user")).appid ? "appid":"schoolId",
+            value: JSON.parse(sessionStorage.getItem("user")).appid
+              ? "appid"
+              : "schoolId",
             opertionType: "equal",
             opertionValue: JSON.parse(sessionStorage.getItem("user")).sunwouId
           }
@@ -172,8 +175,32 @@ export default {
     that.getList();
   },
   methods: {
-    backMoney(){
-      this.tempValue.orderId = this.selection.toString()
+    checkToken() {
+      if (sessionStorage.getItem("time") > 120) {
+        that.getToken();
+      } else {
+        that.backMoney();
+      }
+    },
+    getToken() {
+      $.ajax({
+        url: sessionStorage.getItem("API") + "app/login",
+        data: {
+          userName: this.user.userName,
+          passWord: localStorage.getItem("tempPwd")
+        },
+        dataType: "json",
+        method: "post",
+        success(res) {
+          if (res.code) {
+            that.tempValue.tokenId = res.params.token;
+            that.backMoney();
+          }
+        }
+      });
+    },
+    backMoney() {
+      this.tempValue.orderId = this.selection.toString();
       if (this.tempValue.orderId == "") {
         this.$Message.error("请选择一张银行卡");
       } else if (this.tempValue.passWord == "") {
@@ -185,7 +212,7 @@ export default {
           dataType: "json",
           method: "post",
           success(res) {
-            that.tempValue.passWord = ""
+            that.tempValue.passWord = "";
             that.sModel = false;
             if (res.code) {
               that.$Notice.success({
@@ -210,7 +237,7 @@ export default {
     },
     clearFilter() {
       this.query.pages.currentPage = 1;
-      var li = ["sunwouId","status"];
+      var li = ["sunwouId", "status"];
       for (var i = 0; i < 2; i++) {
         this["search" + parseInt(i + 1)] = "";
         this.search(li[i], parseInt(i + 1));

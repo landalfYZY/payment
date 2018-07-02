@@ -104,7 +104,7 @@ var that;
 export default {
   data() {
     return {
-      activeName:'/overview',
+      activeName: "/overview",
       user: "",
       searchNavText: "",
       contentHeight: 0,
@@ -117,9 +117,9 @@ export default {
       this.routes = this.$route.matched;
       if (this.$route.fullPath == "/main" || this.$route.fullPath == "/") {
         this.meunSelect("/overview");
-        this.activeName = "/overview"
-      }else{
-          this.activeName = this.$route.fullPath
+        this.activeName = "/overview";
+      } else {
+        this.activeName = this.$route.fullPath;
       }
     }
   },
@@ -131,14 +131,23 @@ export default {
       this.routes = this.$route.matched;
       if (this.$route.fullPath == "/main" || this.$route.fullPath == "/") {
         this.meunSelect("/overview");
-      }else{
-          this.activeName = this.$route.fullPath
+      } else {
+        this.activeName = this.$route.fullPath;
       }
     } else {
       this.$router.push("/login");
     }
+    this.docl();
   },
   methods: {
+    docl(){
+        var iner = setInterval(function(){
+             var num = parseInt(sessionStorage.getItem("time"));
+            num += 1;
+            sessionStorage.setItem("time",num);
+        },1000)
+    },
+
     windowResize() {
       this.contentHeight = window.innerHeight - 64 - 62 - 60;
       $(window).resize(function() {
@@ -148,7 +157,7 @@ export default {
     meunSelect(e) {
       if (e == "/login") {
         sessionStorage.removeItem("user");
-        localStorage.setItem("autoLogin",false)
+        localStorage.setItem("autoLogin", false);
       }
       this.$router.push(e);
     }
