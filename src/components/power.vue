@@ -86,7 +86,7 @@ export default {
     getMsgs(e){
         var str = [];
         for(var i in e){
-            str.push(e.sunwouId)
+            str.push(e[i].sunwouId)
         }
         sessionStorage.setItem("power",str.toString())
     },

@@ -2,12 +2,10 @@
     <transition name="el-fade-in-linear">
         <div>
             <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120">
-                <FormItem label="角色名称" prop="role">
-                    <Input v-model="formValidate.role" style="width: 250px" placeholder="角色名称" />
+                <FormItem label="角色名称" prop="des">
+                    <Input v-model="formValidate.des" style="width: 250px" placeholder="角色名称" />
                 </FormItem>
-                <FormItem label="描述" prop="des">
-                  <Input v-model="formValidate.des" style="width: 250px" placeholder="描述" />
-                </FormItem>
+               
                
                 <FormItem label="缴费名单选择" prop="query">
                        <Button type="ghost" @click="dialogVisible = true">点击选择权限</Button><span v-if="formValidate.permissionId != ''"> 已选</span>
@@ -41,14 +39,10 @@ export default {
       formValidate: {
         groupId: JSON.parse(sessionStorage.getItem("user")).sunwouId,
         des: "",
-        role: "",
         permissionId: ""
       },
       ruleValidate: {
         des: [
-          { required: true, message: "描述不能为空", trigger: "blur" }
-        ],
-        role: [
           { required: true, message: "角色名称不能为空", trigger: "blur" }
         ],
         permissionId: [{ required: true, message: "请选择权限" }]

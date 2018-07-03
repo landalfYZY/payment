@@ -55,8 +55,8 @@
                             </Col>
                             <Col :span="16">
                                 <div>
-                                    <div class="font-grey" style="font-size:30px">7852220</div>
-                                    <div class="" >缴费总额</div>
+                                    <div class="font-grey" style="font-size:30px">{{unitNum}}</div>
+                                    <div class="" >单位数量</div>
                                 </div>
                             </Col>
                         </Row>
@@ -65,8 +65,8 @@
             </Row>
             <div style="line-height:50px" class="font-title-mini">快速导航</div>
             <Row :gutter="16">
-                <Col :span="6" v-for="(item,index) in nav.items" :key="index" v-show="user.appid || !item.zt" style="margin-top:30px">
-                    <Card>
+                <Col :span="6" v-for="(item,index) in nav.items" :key="index" v-show="user.appid || !item.zt" style="margin-bottom:30px">
+                    <Card style="height:200px">
                         <p slot="title">{{item.label}}</p>
                         <router-link v-for="(item2,index2) in item.children" :key="index2" tag="li" :to="item2.path" >
                             <a href="javascript:;">{{item2.label}}</a>
@@ -89,6 +89,7 @@ export default {
         studentNum:0,
         wxuserNum:0,
         orderNum:0,
+        unitNum:0,
         nav:navUrl.nav,
         user:""
     };
@@ -100,6 +101,7 @@ export default {
     this.getSData('user',JSON.parse(sessionStorage.getItem("user")).appid ? "appid"
                   : "schoolId",JSON.parse(sessionStorage.getItem("user")) .sunwouId,'studentNum');
     this.getSData('order',JSON.parse(sessionStorage.getItem("user")).appid ? "appid":"schoolId",JSON.parse(sessionStorage.getItem("user")) .sunwouId,'orderNum');
+    this.getSData('school','appId',JSON.parse(sessionStorage.getItem("user")) .sunwouId,'unitNum');
   },
   methods: {
     getSData(url,val,value,name) {
